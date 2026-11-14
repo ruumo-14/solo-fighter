@@ -164,35 +164,35 @@ alter table public.weekly_rankings enable row level security;
 alter table public.admin_audit_log enable row level security;
 
 -- Public profile display, private account state.
-create policy "profiles readable" on public.profiles for select to authenticated using (true);
+create policy "profile owner or admin reads" on public.profiles for select to authenticated using (id = auth.uid() or public.is_admin());
 create policy "profile owner updates display name" on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid() and role = 'player' and suspended = false);
 create policy "save owner reads" on public.player_saves for select to authenticated using (user_id = auth.uid() or public.is_admin());
-create policy "save owner writes" on public.player_saves for insert to authenticated with check (user_id = auth.uid());
-create policy "save owner updates" on public.player_saves for update to authenticated using (user_id = auth.uid() and not coalesce((select suspended from public.profiles where id = auth.uid()), true)) with check (user_id = auth.uid());
-create policy "character owner all" on public.character_ownership for all to authenticated using (user_id = auth.uid() or public.is_admin()) with check (user_id = auth.uid() or public.is_admin());
-create policy "pet owner all" on public.pet_ownership for all to authenticated using (user_id = auth.uid() or public.is_admin()) with check (user_id = auth.uid() or public.is_admin());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "inventory owner read" on public.inventory for select to authenticated using (user_id = auth.uid() or public.is_admin());
-create policy "inventory owner insert" on public.inventory for insert to authenticated with check (user_id = auth.uid());
-create policy "inventory owner update" on public.inventory for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "stage records owner read" on public.stage_records for select to authenticated using (user_id = auth.uid() or public.is_admin());
-create policy "stage records owner insert" on public.stage_records for insert to authenticated with check (user_id = auth.uid());
-create policy "missions owner all" on public.mission_progress for all to authenticated using (user_id = auth.uid() or public.is_admin()) with check (user_id = auth.uid() or public.is_admin());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "achievements owner read" on public.achievements for select to authenticated using (user_id = auth.uid() or public.is_admin());
-create policy "achievements owner insert" on public.achievements for insert to authenticated with check (user_id = auth.uid());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "titles owner read" on public.player_titles for select to authenticated using (user_id = auth.uid() or public.is_admin());
-create policy "titles owner insert" on public.player_titles for insert to authenticated with check (user_id = auth.uid());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "chat read authenticated" on public.chat_messages for select to authenticated using (true);
 create policy "chat insert own" on public.chat_messages for insert to authenticated with check (user_id = auth.uid());
 create policy "chat delete admin" on public.chat_messages for delete to authenticated using (public.is_admin());
 create policy "market read listed" on public.market_listings for select to authenticated using (status = 'listed' or seller_id = auth.uid() or public.is_admin());
-create policy "market seller creates" on public.market_listings for insert to authenticated with check (seller_id = auth.uid());
-create policy "market seller cancels" on public.market_listings for update to authenticated using (seller_id = auth.uid()) with check (seller_id = auth.uid());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "reports create" on public.support_reports for insert to authenticated with check (user_id = auth.uid());
 create policy "reports owner or admin read" on public.support_reports for select to authenticated using (user_id = auth.uid() or public.is_admin());
 create policy "gacha history owner read" on public.gacha_history for select to authenticated using (user_id = auth.uid() or public.is_admin());
-create policy "gacha history owner insert" on public.gacha_history for insert to authenticated with check (user_id = auth.uid());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "rankings public read" on public.weekly_rankings for select to authenticated using (true);
-create policy "rankings own insert" on public.weekly_rankings for insert to authenticated with check (user_id = auth.uid());
+-- Writes are server-only (Supabase Edge Functions / trusted transactions).
 create policy "admin audit read" on public.admin_audit_log for select to authenticated using (public.is_admin());
 
 -- IMPORTANT:
