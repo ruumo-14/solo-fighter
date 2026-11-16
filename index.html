@@ -64,7 +64,7 @@ body.battle-mode .overlay{border-radius:0}
 </nav>
 <main class="content">
 <section class="screen active" id="home"><div class="panel hero"><div><div class="muted small">冒険者ホーム</div><h1 style="margin:5px 0">戦場へ向かおう。</h1><div class="muted">6分間の戦闘を生き残り、3体のボスを撃破せよ。</div></div><button class="primary" data-go="battle">戦闘開始 ▶</button></div><div class="cards"><div class="card"><h3>プレイヤー成長</h3><p>Lv.<b id="homeLv">1</b> / 能力ポイント <b id="points">0</b></p><button data-action="unlock">能力を解放（魔晶 100）</button></div><div class="card"><h3>所持キャラクター</h3><p id="homeChars">剣士 Lv.1</p><button data-go="characters">育成する</button></div><div class="card"><h3>現在のステージ</h3><p id="stageName">草原 1</p><p class="muted small">クリアで次のステージを解放</p><button data-go="battle">挑戦する</button></div></div><div class="panel"><h3>ゲームのルール</h3><p>2分・4分・6分にボスが出現。各ボスは出現から60秒以内に撃破しよう。最後のボスを倒すとステージクリア。</p><p class="muted small">ステージ中のレベル・プレイヤーレベル・キャラクターレベルは別々に管理されます。</p></div></section>
-<section class="screen" id="battle"><div class="panel"><div class="gamebox"><canvas id="game" width="960" height="540" aria-label="2D横視点アクションゲーム"></canvas><div class="battle-top"><button id="pauseBtn" class="round-control" aria-label="一時停止">Ⅱ</button><div class="battle-timer"><b id="clock">00:00</b><small>/ 07:00</small></div><div class="battle-stage">STAGE <b id="battleStage">草原 1</b><small>Lv.<b id="runLv">1</b></small></div></div><div class="battle-bars"><div class="battle-barline"><span>HP</span><div class="bar"><i id="hpbar"></i></div><b id="hptext">100/100</b></div><div class="battle-barline"><span>XP</span><div class="bar xpbar"><i id="xpbar"></i></div><b id="xptext">0/5</b></div></div><div class="battle-bottom"><div class="dpad"><button id="leftBtn" aria-label="左へ">◀</button><button id="rightBtn" aria-label="右へ">▶</button></div><div class="action-pad"><button id="jumpBtn" class="action-button jump-button">ジャンプ</button><button id="attackBtn" class="action-button attack-button">攻撃</button></div></div><div class="overlay" id="overlay"><div style="max-width:720px;width:100%"><h2 id="overlayTitle">スキル選択</h2><p id="overlayText">スキルを1つ選ぼう</p><div class="choices" id="choices"></div><button id="overlayClose" style="margin-top:12px;display:none">閉じる</button></div></div></div><div class="row" style="margin-top:9px"><button id="startBtn" class="primary">ステージ開始</button><button id="cmdBtn">コマンド</button><span class="muted small">キーボード：← → / Space / Z / X</span></div></div></section>
+<section class="screen" id="battle"><div class="panel"><div class="gamebox"><canvas id="game" width="960" height="540" aria-label="2D横視点アクションゲーム"></canvas><div class="battle-top"><button id="pauseBtn" class="round-control" aria-label="一時停止">Ⅱ</button><div class="battle-timer"><b id="clock">00:00</b><small>/ 07:00</small></div><div class="battle-stage">STAGE <b id="battleStage">草原 1</b><small>Lv.<b id="runLv">1</b></small></div></div><div class="battle-bars"><div class="battle-barline"><span>XP</span><div class="bar xpbar"><i id="xpbar"></i></div><b id="xptext">0/8</b></div><div class="battle-barline" id="bossHud" style="display:none"><span id="bossName">BOSS</span><div class="bar"><i id="bossbar"></i></div></div><div class="battle-barline"><span>HP</span><div class="bar"><i id="hpbar"></i></div><b id="hptext">100/100</b></div><div class="battle-barline"><span>MP</span><div class="bar"><i id="mpbar"></i></div><b id="mptext">60/60</b></div><div class="battle-barline"><span>ST</span><div class="bar"><i id="stbar"></i></div><b id="sttext">100/100</b></div></div><div class="battle-bottom"><div class="dpad"><button id="leftBtn" aria-label="左へ">◀</button><button id="rightBtn" aria-label="右へ">▶</button></div><div class="action-pad"><button id="jumpBtn" class="action-button jump-button">ジャンプ</button><button id="attackBtn" class="action-button attack-button">攻撃</button></div></div><div class="overlay" id="overlay"><div style="max-width:720px;width:100%"><h2 id="overlayTitle">スキル選択</h2><p id="overlayText">スキルを1つ選ぼう</p><div class="choices" id="choices"></div><button id="overlayClose" style="margin-top:12px;display:none">閉じる</button></div></div></div><div class="row" style="margin-top:9px"><button id="startBtn" class="primary">ステージ開始</button><button id="cmdBtn">コマンド</button><span class="muted small">キーボード：A・D / ←・→ / Space / J / Esc</span></div></div></section>
 <section class="screen" id="characters"><div class="panel"><h2>キャラクター</h2><p class="muted">キャラクターごとに攻撃方法と特殊能力が異なります。</p><div class="cards" id="characterList"></div><div class="row" style="margin-top:12px"><button data-action="resetChar">選択キャラのレベルをリセット</button><span class="small muted">消費魔晶の90%を返還</span></div></div></section>
 <section class="screen" id="pets"><div class="panel"><h2>ペット</h2><p>ペットは直接戦闘せず、所持効果・バフでプレイヤーを補助します。</p><div id="petList" class="cards"></div></div></section>
 <section class="screen" id="equipment"><div class="panel"><h2>装備</h2><p>装備にはレアリティと属性があります。S1はS1ガチャ限定です。</p><div id="gearList" class="list"></div><p class="small muted">属性相性：得意属性への攻撃は2倍、苦手属性への攻撃は0.5倍。ノーマル属性は相性なし。</p></div></section>
@@ -88,81 +88,384 @@ document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{if(b.datase
 const characters=[{name:"剣士",desc:"近距離の剣攻撃。扱いやすい標準キャラクター。",skill:"斬撃の威力+10%"},{name:"魔法使い",desc:"魔法弾で中距離を攻撃する。",skill:"魔法攻撃の威力+15%"},{name:"弓使い",desc:"素早い遠距離攻撃が得意。",skill:"攻撃速度+10%"}];
 function renderLists(){$("characterList").innerHTML=characters.map(c=>'<div class="card"><h3>'+c.name+(state.character===c.name?' ★':'')+'</h3><p class="small">'+c.desc+'</p><p class="small gold">'+c.skill+'</p><p>Lv.'+state.charLevels[c.name]+'</p><button data-pick="'+c.name+'">選択</button> <button data-level="'+c.name+'">強化（'+(state.charLevels[c.name]*50)+'魔晶）</button></div>').join("");document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{state.character=b.dataset.pick;save();renderLists()});document.querySelectorAll("[data-level]").forEach(b=>b.onclick=()=>{let n=b.dataset.level,cost=state.charLevels[n]*50;if(state.crystal<cost)return alert("魔晶が足りません");state.crystal-=cost;state.charSpent[n]=(state.charSpent[n]||0)+cost;state.charLevels[n]++;save();renderLists()});$("petList").innerHTML=state.pets.map(p=>'<div class="card"><h3>🐾 '+p+'</h3><p>所持効果：獲得経験値 +5%</p></div>').join("");$("gearList").innerHTML=state.gear.map(g=>'<div class="listitem"><span>'+g.name+' <b class="'+(g.rarity==="S1"?"legend":g.rarity==="レジェンド"?"legend":g.rarity==="エピック"?"epic":g.rarity==="レア"?"rare":"normal")+'">'+g.rarity+'</b></span><span>属性：'+g.element+'</span></div>').join("");$("missionList").innerHTML=["ステージを1回クリア","敵を20体倒す","スキルを3回獲得","ボスを1体倒す"].map((m,i)=>'<div class="listitem"><span>'+m+'</span><span class="muted">進行状況はプレイで更新</span></div>').join("")}
 renderMeta();renderLists();
-// Battle engine: fixed camera, simple geometric original artwork.
-const canvas=$("game"),ctx=canvas.getContext("2d");let game={active:false,paused:false,ended:false,t:0,last:0,spawn:0,player:{x:145,y:390,vx:0,vy:0,hp:100,max:100,onGround:true,face:1,attack:0,stamina:0},enemies:[],boss:null,xp:0,level:1,xpNeed:5,kills:0,bossCount:0,miniAt:0,skills:[],keys:{},mode:"normal",damage:20};
-const skillPool=[{name:"強撃",rarity:"ノーマル",desc:"攻撃力 +20%",apply:()=>game.damage*=1.2},{name:"生命力",rarity:"ノーマル",desc:"最大HP +25",apply:()=>{game.player.max+=25;game.player.hp+=25}},{name:"俊足",rarity:"レア",desc:"移動速度 +20%",apply:()=>game.speed=(game.speed||4)*1.2},{name:"二段跳びのスタミナ",rarity:"レア",desc:"空中ジャンプを解放",apply:()=>game.doubleJump=true},{name:"吸収",rarity:"エピック",desc:"敵撃破時にHPを少し回復",apply:()=>game.lifeSteal=true},{name:"剣聖の一撃",rarity:"レジェンド",desc:"攻撃力 +100%",apply:()=>game.damage*=2}];
+// Battle engine rebuilt from the agreed combat design.
+const canvas=$("game"),ctx=canvas.getContext("2d");
+const W=960,H=540,FLOOR=432;
+const game={
+ active:false,paused:false,ended:false,t:0,last:0,spawnClock:0,
+ player:null,enemies:[],projectiles:[],bosses:[],damageTexts:[],skills:[],
+ xp:0,xpNeed:8,level:1,kills:0,earnedCrystal:0,earnedXP:0,
+ pendingLevels:0,legendUsed:false,keys:{},doubleTap:{},eliteClock:0,
+ mode:"normal",resultWin:false,skillQueue:[],commandBuffer:[],
+};
+const rarityOrder=["ノーマル","レア","エピック","レジェンド"];
+const rarityColors={"ノーマル":"#fff","レア":"#4b9dff","エピック":"#b58cff","レジェンド":"#e6b94f"};
+const skillPool=[
+ {id:"maxhp",name:"生命力",rarity:"ノーマル",desc:"最大HP +20",apply:()=>{game.player.maxHP+=20}},
+ {id:"maxmp",name:"魔力容量",rarity:"ノーマル",desc:"最大MP +15",apply:()=>{game.player.maxMP+=15}},
+ {id:"maxst",name:"体力容量",rarity:"ノーマル",desc:"最大スタミナ +20",apply:()=>{game.player.maxStamina+=20}},
+ {id:"attack",name:"攻撃強化",rarity:"ノーマル",desc:"攻撃力 +10%",apply:()=>{game.player.attackPower*=1.1}},
+ {id:"defense",name:"防御強化",rarity:"ノーマル",desc:"防御力 +5",apply:()=>{game.player.defense+=5}},
+ {id:"speed",name:"俊足",rarity:"レア",desc:"移動速度 +8%",apply:()=>{game.player.speed*=1.08}},
+ {id:"mpregen",name:"魔力回復",rarity:"レア",desc:"MP自然回復量 +1",apply:()=>{game.player.mpRegen+=1}},
+ {id:"stregen",name:"スタミナ回復",rarity:"レア",desc:"スタミナ自然回復量 +1",apply:()=>{game.player.stRegen+=1}},
+ {id:"hpregen",name:"生命回復",rarity:"エピック",desc:"HP自然回復量 +1",apply:()=>{game.player.hpRegen+=1}},
+ {id:"revive",name:"不屈の魂",rarity:"レジェンド",desc:"HPが0になると1回だけ最大HPで復活。復活後2秒無敵",apply:()=>{game.player.revive=true}}
+];
+function newPlayer(){
+ return {x:150,y:FLOOR,vx:0,vy:0,face:1,onGround:true,jumps:0,maxJumps:2,
+  hp:100,maxHP:100,mp:60,maxMP:60,stamina:100,maxStamina:100,
+  attackPower:10,defense:0,speed:3.8,hpRegen:2,mpRegen:3,stRegen:5,
+  regenClock:0,attackTimer:0,attackCooldown:0,attackDir:1,attackHit:[],
+  invuln:0,revive:false,revived:false,knockX:0,knockY:0,knockCap:13,
+  dodgeCooldown:0,dodgeTime:0,dodgeDir:1,hitFlash:0};
+}
 function rarityClass(r){return r==="レア"?"rare":r==="エピック"?"epic":r==="レジェンド"?"legend":"normal"}
-function showOverlay(title,txt,choices,close=false){$("overlayTitle").textContent=title;$("overlayText").textContent=txt;$("choices").innerHTML=choices||"";$("overlayClose").style.display=close?"inline-block":"none";$("overlay").classList.add("show")}
+function showOverlay(title,txt,choices,close){
+ $("overlayTitle").textContent=title;$("overlayText").textContent=txt;$("choices").innerHTML=choices||"";
+ $("overlayClose").style.display=close?"inline-block":"none";$("overlay").classList.add("show");
+}
 function hideOverlay(){$("overlay").classList.remove("show")}
-function pickSkills(minRare=false){game.paused=true;let pool=skillPool.filter(s=>!minRare||["レア","エピック","レジェンド"].includes(s.rarity));let picks=[];while(picks.length<3){let s=pool[Math.floor(Math.random()*pool.length)];if(!picks.includes(s))picks.push(s)}showOverlay("スキル選択","3つの候補から1つ選ぼう。",picks.map((s,i)=>'<button class="choice rarity-'+(s.rarity==="レア"?"rare":s.rarity==="エピック"?"epic":s.rarity==="レジェンド"?"legend":"normal")+'" data-skill="'+i+'"><b class="'+rarityClass(s.rarity)+'">'+s.rarity+'</b><h3>'+s.name+'</h3><p class="small">'+s.desc+'</p></button>').join(""));document.querySelectorAll("[data-skill]").forEach(b=>b.onclick=()=>{let s=picks[+b.dataset.skill];s.apply();game.skills.push(s.name);game.paused=false;hideOverlay();if(game.active)game.last=performance.now()})}
-$("overlayClose").onclick=()=>{hideOverlay();game.paused=false};
-function startGame(mode="normal"){document.body.classList.add("battle-mode");game={...game,active:true,paused:false,ended:false,t:0,last:performance.now(),spawn:0,enemies:[],projectiles:[],boss:null,xp:0,level:1,xpNeed:5,kills:0,bossCount:0,miniAt:Math.random()<.28?35+Math.random()*70:0,skills:[],mode,damage:20,speed:4,doubleJump:false,lifeSteal:false,player:{x:480,y:390,vx:0,vy:0,hp:100,max:100,onGround:true,face:1,attack:0,stamina:0,jumps:0,hitCooldown:0},keys:{}};$("startBtn").textContent="再スタート";hideOverlay();showScreen("battle");requestAnimationFrame(loop)}
-
-$("startBtn").onclick=()=>startGame();$("pauseBtn").onclick=()=>{if(!game.active)return;game.paused=true;showOverlay("一時停止","戦闘を一時停止中",'<button class="choice" id="resumeCmd">戦闘に戻る</button><button class="choice" id="homeCmd">ホームへ戻る</button>')};$("cmdBtn").onclick=()=>showOverlay("コマンド","戦闘中のコマンド",'<button class="choice" id="resumeCmd">戦闘に戻る</button><button class="choice" id="quitCmd">ステージを終了</button><button class="choice" id="homeCmd">ホームへ戻る</button>');$("choices").addEventListener("click",e=>{if(e.target.id==="resumeCmd"||e.target.closest("#resumeCmd")){hideOverlay();game.paused=false;game.last=performance.now()}if(e.target.id==="quitCmd"||e.target.closest("#quitCmd"))finish(false,"ステージを終了しました");if(e.target.id==="homeCmd"||e.target.closest("#homeCmd")){game.active=false;hideOverlay();document.body.classList.remove("battle-mode");showScreen("home")}});
-function spawnEnemy(){let elapsed=game.t,scale=1+elapsed/95+(state.stage-1)*.75;let roll=Math.random(),type=roll<.34?"beast":roll<.61?"goblin":roll<.84?"skeleton":"hover";let x=Math.random()<.5?-35:995;let hp=Math.round((type==="goblin"?32:type==="skeleton"?22:type==="hover"?26:28)*scale);game.enemies.push({type,x,y:type==="hover"?250:390,w:type==="goblin"?40:34,h:type==="goblin"?48:36,hp,max:hp,speed:(type==="beast"?1.25:type==="goblin"?1.05:type==="skeleton"?.65:1.0)+scale*.16,damage:8+scale*2,mini:false,state:"approach",stateTime:0,attackCooldown:0,flash:0,hitFlash:0,dir:0});}
-function spawnBoss(){let n=game.bossCount+1;let scale=1+game.t/110+(state.stage-1)*.8;game.boss={x:790,y:350,w:100,h:105,hp:Math.round(260*scale),max:Math.round(260*scale),damage:18+scale*4,deadline:game.t+60,n};game.bossCount=n}
-function update(dt){if(!game.active||game.paused||game.ended)return;let p=game.player;game.t+=dt;let speed=game.speed||4;p.vx=(game.keys.right?speed:0)-(game.keys.left?speed:0);if(p.vx)p.face=Math.sign(p.vx);p.x=Math.max(18,Math.min(942,p.x+p.vx));p.vy+=.55;p.y+=p.vy;if(p.y>=390){p.y=390;p.vy=0;p.onGround=true;p.jumps=0}else p.onGround=false;if(p.attack>0)p.attack-=dt;if(p.hitCooldown>0)p.hitCooldown-=dt;if(game.keys.attack&&p.attack<=0){p.attack=.32;let hit=false;game.enemies.forEach(e=>{if(Math.abs(e.x-p.x)<92&&Math.abs(e.y-p.y)<78){e.hp-=game.damage;hit=true}});if(game.boss&&Math.abs(game.boss.x-p.x)<145)game.boss.hp-=game.damage;if(hit&&game.lifeSteal)p.hp=Math.min(p.max,p.hp+2)}
-if(game.t>=120&&game.bossCount<1&&!game.boss)spawnBoss();if(game.t>=240&&game.bossCount<2&&!game.boss)spawnBoss();if(game.t>=360&&game.bossCount<3&&!game.boss)spawnBoss();if(game.boss&&game.t>game.boss.deadline){finish(false,"ボスを制限時間内に倒せなかった！");return}if(game.t>=420&&!game.boss&&game.bossCount===3){finish(true,"最終ボス撃破！ステージクリア！");return}
-game.spawn+=dt;if(game.spawn>Math.max(.65,2.0-game.t/300)){game.spawn=0;spawnEnemy()}
-if(game.miniAt>0&&game.t>=game.miniAt){game.miniAt=0;game.enemies.push({type:"goblin",x:995,y:390,w:65,h:75,hp:120+state.stage*35,max:120+state.stage*35,speed:1.3,damage:14,mini:true,state:"approach",stateTime:0,attackCooldown:0,flash:0,hitFlash:0})}
-game.enemies.forEach(e=>{e.attackCooldown=Math.max(0,e.attackCooldown-dt);e.hitFlash=Math.max(0,e.hitFlash-dt);let dx=p.x-e.x,dist=Math.abs(dx),dir=Math.sign(dx)||-1;e.dir=dir;
-if(e.type==="beast"){e.x+=dir*e.speed;if(dist<29&&p.hitCooldown<=0){p.hp-=e.damage;p.hitCooldown=.65}}
-else if(e.type==="goblin"){if(e.state==="approach"){if(dist>145)e.x+=dir*e.speed;else{e.state="windup";e.stateTime=.72;e.dir=dir}}else if(e.state==="windup"){e.stateTime-=dt;if(e.stateTime<=0){e.state="charge";e.stateTime=.48;e.dir=dir}}else if(e.state==="charge"){e.x+=e.dir*(e.speed*5.5);e.stateTime-=dt;if(dist<42&&p.hitCooldown<=0){p.hp-=e.damage*1.35;p.hitCooldown=.8}if(e.stateTime<=0){e.state="recover";e.stateTime=.65}}else{e.stateTime-=dt;if(e.stateTime<=0)e.state="approach"}}
-else if(e.type==="skeleton"){if(dist<235)e.x-=dir*e.speed*.6;else if(dist>330)e.x+=dir*e.speed*.5;if(e.state==="approach"&&dist<390){e.state="aim";e.stateTime=.95;e.flash=.95}else if(e.state==="aim"){e.stateTime-=dt;e.flash=e.stateTime;if(e.stateTime<=0){let vx=dir*5.3,vy=-5.7;game.projectiles.push({x:e.x,y:e.y-24,vx,vy,gravity:.22,damage:e.damage,life:2.7});e.state="recover";e.stateTime=1.2}}else if(e.state==="recover"){e.stateTime-=dt;if(e.stateTime<=0)e.state="approach"}}
-else if(e.type==="hover"){if(e.state==="approach"){if(dist>155)e.x+=dir*e.speed;else{e.state="windup";e.stateTime=.68;e.dir=dir}}else if(e.state==="windup"){e.stateTime-=dt;if(e.stateTime<=0){e.state="charge";e.stateTime=.55;e.dir=dir}}else if(e.state==="charge"){e.x+=e.dir*(e.speed*6);e.y+=(390-e.y)*.09;e.stateTime-=dt;if(dist<43&&p.hitCooldown<=0){p.hp-=e.damage;p.hitCooldown=.8}if(e.stateTime<=0){e.state="recover";e.stateTime=.8}}else{e.stateTime-=dt;e.y+=(250-e.y)*.08;if(e.stateTime<=0)e.state="approach"}if(e.state!=="charge"&&e.state!=="recover")e.y=250+Math.sin(game.t*3+e.x*.015)*12}
+function randomRarity(){
+ const n=Math.random();
+ if(n<0.002)return "レジェンド";
+ if(n<0.022)return "エピック";
+ if(n<0.17)return "レア";
+ return "ノーマル";
+}
+function chooseSkills(bossReward){
+ let pool=skillPool.filter(s=>!bossReward||s.rarity!=="ノーマル");
+ pool=pool.filter(s=>!(s.rarity==="レジェンド"&&game.legendUsed));
+ if(!bossReward){
+  pool=pool.filter(s=>{const r=randomRarity();return r===s.rarity});
+ }
+ const picks=[];
+ while(pool.length&&picks.length<3){
+  const i=Math.floor(Math.random()*pool.length),s=pool.splice(i,1)[0];
+  if(!picks.some(p=>p.id===s.id))picks.push(s);
+ }
+ if(!picks.length)picks.push(skillPool[0]);
+ return picks;
+}
+function openSkillChoice(bossReward){
+ game.paused=true;
+ const picks=chooseSkills(bossReward);
+ const cards=picks.map((s,i)=>'<button class="choice rarity-'+rarityClass(s.rarity)+'" data-skill="'+i+'" style="border-color:'+rarityColors[s.rarity]+'"><b style="color:'+rarityColors[s.rarity]+'">'+s.rarity+'</b><h3>'+s.name+'</h3><p class="small">'+s.desc+'</p></button>').join("");
+ showOverlay(bossReward?"ボス撃破報酬":"レベルアップ","3つの候補から1つ選んでください。",cards,false);
+ document.querySelectorAll("[data-skill]").forEach(b=>b.onclick=()=>{
+  const s=picks[Number(b.dataset.skill)];s.apply();
+  const found=game.skills.find(x=>x.id===s.id);
+  if(found)found.level++;else game.skills.push({id:s.id,name:s.name,rarity:s.rarity,level:1,desc:s.desc});
+  if(s.rarity==="レジェンド")game.legendUsed=true;
+  hideOverlay();game.paused=false;game.last=performance.now();
+  if(game.pendingLevels>0){game.pendingLevels--;openSkillChoice(false)}
+ });
+}
+function gainXP(amount){
+ game.earnedXP+=amount;game.xp+=amount;
+ while(game.xp>=game.xpNeed){game.xp-=game.xpNeed;game.level++;game.xpNeed=Math.ceil(game.xpNeed*1.42);game.pendingLevels++}
+ if(!game.paused&&game.pendingLevels>0){game.pendingLevels--;openSkillChoice(false)}
+}
+function addReward(crystal,xp){
+ state.crystal+=crystal;state.totalCrystal+=crystal;game.earnedCrystal+=crystal;gainXP(xp);save();
+}
+function damageText(x,y,value,color){
+ game.damageTexts.push({x:x,y:y,text:String(Math.max(1,Math.round(value))),life:.8,color:color||"#f5f1e8"});
+}
+function clampKnock(value,cap){return Math.max(-cap,Math.min(cap,value))}
+function applyKnockback(target,dir,power){
+ const k=clampKnock(power,target.knockCap||13);
+ target.knockX=clampKnock((target.knockX||0)+dir*k,target.knockCap||13);
+ target.knockY=target.onGround?0:clampKnock((target.knockY||0)-Math.min(2,k*.12),target.knockCap||13);
+}
+function takePlayerHit(raw,fromX,power){
+ const p=game.player;if(p.invuln>0||game.ended)return;
+ let amount=Math.max(1,raw-p.defense*.25);
+ p.hp=Math.max(0,p.hp-amount);p.invuln=.3;p.hitFlash=.3;
+ applyKnockback(p,p.x<fromX?-1:1,power||4);damageText(p.x,p.y-55,amount,"#e34e4e");
+ if(p.hp<=0&&p.revive&&!p.revived){
+  p.revived=true;p.hp=p.maxHP;p.invuln=2;p.revive=false;
+  damageText(p.x,p.y-75,"復活","#e6b94f");
+ }
+}
+function spawnEnemy(){
+ const t=game.t,scale=1+t/180+(state.stage-1)*.25;
+ const roll=Math.random(),type=roll<.34?"beast":roll<.60?"goblin":roll<.82?"skeleton":"hover";
+ const side=Math.random()<.5?-1:1,x=side<0?-28:W+28;
+ const base={beast:28,goblin:34,skeleton:22,hover:26}[type],hp=Math.round(base*scale);
+ game.enemies.push({type,x,y:type==="hover"?250:FLOOR,hp,maxHP:hp,damage:5+scale*1.8,speed:1.05+scale*.12,
+  state:"approach",timer:0,face:side<0?1:-1,knockX:0,knockY:0,knockCap:12,
+  attackClock:0,flash:0,elite:0,dead:false,hitThisAttack:false});
+}
+function spawnElite(){
+ if(game.t<35)return;
+ const tier=game.t<150?1:game.t<280?Math.random()<.7?1:2:Math.random()<.45?1:Math.random()<.8?2:3;
+ const type=["beast","goblin","skeleton","hover"][Math.floor(Math.random()*4)];
+ const side=Math.random()<.5?-1:1,base={beast:28,goblin:34,skeleton:22,hover:26}[type];
+ const hp=Math.round(base*(1+game.t/180)*[1,2,3,5][tier]);
+ game.enemies.push({type,x:side<0?-28:W+28,y:type==="hover"?250:FLOOR,hp,maxHP:hp,damage:(5+game.t/90)*[1,1.35,1.8,2.4][tier],
+  speed:1.2+game.t/500,state:"approach",timer:0,face:side<0?1:-1,knockX:0,knockY:0,knockCap:12,
+  attackClock:0,flash:0,elite:tier,dead:false,hitThisAttack:false});
+}
+function spawnBoss(index){
+ const names=["古代の守護者","紅蓮の獣王","深淵の巨人"];
+ const hp=[360,560,850][index]+game.t*1.1;
+ game.bosses.push({index,name:names[index],x:W+20,y:FLOOR-20,w:90+index*8,h:95+index*10,
+  hp:hp,maxHP:hp,damage:14+index*5,speed:1.1+index*.12,state:"approach",timer:0,
+  attackClock:1.2,phase:1,knockX:0,knockY:0,knockCap:4,dead:false});
+}
+function attack(){
+ const p=game.player;if(!game.active||game.paused||p.attackCooldown>0||p.attackTimer>0)return;
+ p.attackTimer=.22;p.attackCooldown=.42;p.attackDir=p.face;p.attackHit=[];
+ const reach=64,damage=p.attackPower;
+ game.enemies.forEach(e=>{
+  if(Math.abs(e.x-p.x)<=reach&&Math.abs(e.y-p.y)<=90&&(e.x-p.x)*p.attackDir>=-12){
+   e.hp-=damage;e.flash=.12;p.attackHit.push(e);
+   const dir=e.x>=p.x?1:-1;applyKnockback(e,dir,Math.min(10,2+damage*.16));
+   damageText(e.x,e.y-38,damage,"#fff4c7");
+  }
+ });
+ game.bosses.forEach(b=>{
+  if(!b.dead&&Math.abs(b.x-p.x)<reach+35&&Math.abs(b.y-p.y)<110&&(b.x-p.x)*p.attackDir>=-18){
+   b.hp-=damage;b.flash=.12;applyKnockback(b,b.x>=p.x?1:-1,Math.min(3,damage*.025));
+   damageText(b.x,b.y-65,damage,"#fff4c7");
+  }
+ });
+}
+function jump(){
+ const p=game.player;if(!game.active||game.paused)return;
+ if(p.jumps>=p.maxJumps||p.stamina<18)return;
+ p.stamina-=18;p.vy=p.jumps===0?-11.5:-10.5;p.jumps++;p.onGround=false;
+}
+function dodge(dir){
+ const p=game.player;if(!game.active||game.paused||p.dodgeCooldown>0||p.stamina<25)return;
+ p.stamina-=25;p.dodgeCooldown=1.0;p.dodgeTime=.16;p.dodgeDir=dir;p.invuln=Math.max(p.invuln,.12);
+ p.knockX=dir*10;
+}
+function tryDoubleTap(dir){
+ const now=performance.now(),key=dir>0?"right":"left",last=game.doubleTap[key]||0;
+ if(now-last<260)dodge(dir);
+ game.doubleTap[key]=now;
+}
+function spawnProjectile(x,y,vx,vy,damage,kind){
+ game.projectiles.push({x,y,vx,vy,gravity:.18,damage,life:3,kind});
+}
+function updateEnemy(e,dt,p){
+ e.flash=Math.max(0,e.flash-dt);e.attackClock=Math.max(0,e.attackClock-dt);
+ const dx=p.x-e.x,dist=Math.abs(dx),dir=Math.sign(dx)||-1;
+ if(Math.abs(e.knockX)>0.1)e.x+=e.knockX;
+ e.knockX*=Math.pow(.08,dt);
+ if(e.type==="hover"&&e.state!=="charge")e.y=250+Math.sin(game.t*3+e.x*.02)*10;
+ if(e.type==="beast"){
+  if(dist>28)e.x+=dir*e.speed;
+  if(dist<34&&e.attackClock<=0){takePlayerHit(e.damage,e.x,3);e.attackClock=.8}
+ }else if(e.type==="goblin"){
+  if(e.state==="approach"){if(dist>145)e.x+=dir*e.speed;else{e.state="windup";e.timer=.7;e.face=dir}}
+  else if(e.state==="windup"){e.timer-=dt;if(e.timer<=0){e.state="charge";e.timer=.38}}
+  else if(e.state==="charge"){e.x+=e.face*e.speed*5.5;e.timer-=dt;if(Math.abs(e.x-p.x)<38&&Math.abs(e.y-p.y)<70&&e.attackClock<=0){takePlayerHit(e.damage*1.3,e.x,5);e.attackClock=.7}if(e.timer<=0){e.state="recover";e.timer=.55}}
+  else{e.timer-=dt;if(e.timer<=0)e.state="approach"}
+ }else if(e.type==="skeleton"){
+  if(dist<230)e.x-=dir*e.speed*.45;else if(dist>330)e.x+=dir*e.speed*.35;
+  if(e.state==="approach"&&dist<390){e.state="aim";e.timer=.9}
+  else if(e.state==="aim"){e.timer-=dt;if(e.timer<=0){spawnProjectile(e.x,e.y-22,dir*5.2,-5.5,e.damage,"arrow");e.state="recover";e.timer=1.1}}
+  else if(e.state==="recover"){e.timer-=dt;if(e.timer<=0)e.state="approach"}
+ }else{
+  if(e.state==="approach"){if(dist>155)e.x+=dir*e.speed;else{e.state="windup";e.timer=.65;e.face=dir}}
+  else if(e.state==="windup"){e.timer-=dt;if(e.timer<=0){e.state="charge";e.timer=.45}}
+  else if(e.state==="charge"){e.x+=e.face*e.speed*6;e.y+=(FLOOR-e.y)*.12;e.timer-=dt;if(Math.abs(e.x-p.x)<40&&Math.abs(e.y-p.y)<55&&e.attackClock<=0){takePlayerHit(e.damage,e.x,5);e.attackClock=.8}if(e.timer<=0){e.state="recover";e.timer=.7}}
+  else{e.timer-=dt;if(e.timer<=0)e.state="approach"}
+ }
+ if(e.x<0)e.x=0;if(e.x>W)e.x=W;
+}
+function updateBoss(b,dt,p){
+ if(b.dead)return;b.flash=Math.max(0,(b.flash||0)-dt);
+ if(b.hp<=0){b.dead=true;game.kills++;addReward(100+50*b.index,8+4*b.index);game.skillQueue.push("boss");return}
+ if(b.hp<b.maxHP*.5)b.phase=2;
+ const dir=Math.sign(p.x-b.x)||-1,dist=Math.abs(p.x-b.x);
+ if(Math.abs(b.knockX)>0.1)b.x+=b.knockX;b.knockX*=Math.pow(.08,dt);
+ if(b.state==="approach"){if(dist>115)b.x+=dir*b.speed;else{b.state="windup";b.timer=b.phase===1?.8:.55}}
+ else if(b.state==="windup"){b.timer-=dt;if(b.timer<=0){b.state="charge";b.timer=.5;b.face=dir}}
+ else if(b.state==="charge"){
+  b.x+=b.face*(b.speed*(b.phase===1?4.2:5.4));b.timer-=dt;
+  if(Math.abs(b.x-p.x)<55&&b.attackClock<=0){takePlayerHit(b.damage,b.x,7);b.attackClock=.8}
+  if(b.timer<=0){b.state="recover";b.timer=.9}
+ }else{b.timer-=dt;if(b.timer<=0){b.state="approach";b.attackClock=1.4}}
+ if(b.index===1&&b.state==="windup"&&b.timer<.25&&b.attackClock<=0){spawnProjectile(b.x,b.y-65,-dir*4,-2,b.damage,"ember");b.attackClock=1.1}
+ b.x=Math.max(30,Math.min(W-30,b.x));
+}
+function resolveBodies(){
+ const p=game.player;
+ for(let i=0;i<game.enemies.length;i++){
+  const a=game.enemies[i];
+  for(let j=i+1;j<game.enemies.length;j++){
+   const b=game.enemies[j];
+   if(Math.abs(a.x-b.x)<30&&Math.abs(a.y-b.y)<42){a.x-=Math.sign(a.x-b.x||1)*.5;b.x+=Math.sign(a.x-b.x||1)*.5}
+  }
+  if(Math.abs(a.x-p.x)<28&&Math.abs(a.y-p.y)<52){
+   if(a.type==="beast"&&a.attackClock<=0){takePlayerHit(a.damage,a.x,3);a.attackClock=.8}
+   if(a.type!=="beast"&&a.state!=="charge")a.x+=a.x<p.x?-1:1;
+  }
+ }
+}
+function update(dt){
+ if(!game.active||game.paused||game.ended)return;
+ const p=game.player;game.t+=dt;
+ p.attackTimer=Math.max(0,p.attackTimer-dt);p.attackCooldown=Math.max(0,p.attackCooldown-dt);
+ p.invuln=Math.max(0,p.invuln-dt);p.hitFlash=Math.max(0,p.hitFlash-dt);
+ p.dodgeCooldown=Math.max(0,p.dodgeCooldown-dt);p.dodgeTime=Math.max(0,p.dodgeTime-dt);
+ p.vx=(game.keys.right?1:0)-(game.keys.left?1:0);
+ if(p.vx)p.face=Math.sign(p.vx);
+ p.x+=p.vx*p.speed+(p.knockX||0);
+ p.knockX=(p.knockX||0)*Math.pow(.08,dt);
+ p.vy+=.55;p.y+=p.vy+(p.knockY||0);p.knockY=(p.knockY||0)*Math.pow(.08,dt);
+ if(p.y>=FLOOR){p.y=FLOOR;p.vy=0;p.onGround=true;p.jumps=0}else p.onGround=false;
+ p.x=Math.max(18,Math.min(W-18,p.x));
+ p.regenClock+=dt;if(p.regenClock>=1){p.regenClock-=1;p.hp=Math.min(p.maxHP,p.hp+p.hpRegen);p.mp=Math.min(p.maxMP,p.mp+p.mpRegen);p.stamina=Math.min(p.maxStamina,p.stamina+p.stRegen)}
+ if(game.t>=5){
+  game.spawnClock+=dt;
+  if(game.spawnClock>=Math.max(.55,1.65-game.t/520)){game.spawnClock=0;spawnEnemy()}
+  game.eliteClock+=dt;if(game.eliteClock>55){game.eliteClock=0;if(Math.random()<.55)spawnElite()}
+ }
+ [120,240,360].forEach((at,i)=>{if(game.t>=at&&!game.bosses.some(b=>b.index===i)){spawnBoss(i)}});
+ game.enemies.forEach(e=>updateEnemy(e,dt,p));
+ game.bosses.forEach(b=>updateBoss(b,dt,p));
+ game.projectiles=game.projectiles.filter(b=>{
+  b.x+=b.vx;b.y+=b.vy;b.vy+=b.gravity;b.life-=dt;
+  if(Math.abs(b.x-p.x)<19&&Math.abs(b.y-(p.y-25))<25){takePlayerHit(b.damage,b.x,3);return false}
+  return b.life>0&&b.x>-30&&b.x<W+30&&b.y<H+30;
+ });
+ resolveBodies();
+ game.enemies=game.enemies.filter(e=>{
+  if(e.hp<=0){
+   game.kills++;const mult=e.elite?[1,2,3,5][e.elite]:1;
+   addReward((4+Math.floor(game.t/50))*mult,mult);damageText(e.x,e.y-30,"魔晶 +"+((4+Math.floor(game.t/50))*mult),"#e2bd52");
+   return false;
+  }
+  return true;
+ });
+ game.bosses=game.bosses.filter(b=>!b.dead);
+ game.damageTexts=game.damageTexts.filter(d=>{d.y-=.7;d.life-=dt;return d.life>0});
+ if(game.skillQueue.length&&!game.paused){const q=game.skillQueue.shift();openSkillChoice(q==="boss")}
+ if(p.hp<=0){finish(false,"HPが0になった");return}
+ if(game.t>=420){
+  if(game.bosses.length===0&&game.bosses.length>=0&&game.bossesDefeated===3)finish(true,"最後のボスを撃破！"); 
+  else finish(false,"制限時間内に最後のボスを倒せなかった");
+ }
+ updateHUD();
+}
+function updateHUD(){
+ const p=game.player;
+ $("clock").textContent=fmt(game.t);$("runLv").textContent=game.level;
+ $("hpbar").style.width=(p.hp/p.maxHP*100)+"%";$("hptext").textContent=Math.ceil(p.hp)+"/"+p.maxHP;
+ if($("mpbar")){$("mpbar").style.width=(p.mp/p.maxMP*100)+"%";$("mptext").textContent=Math.ceil(p.mp)+"/"+p.maxMP}
+ if($("stbar")){$("stbar").style.width=(p.stamina/p.maxStamina*100)+"%";$("sttext").textContent=Math.ceil(p.stamina)+"/"+p.maxStamina}
+ $("xptext").textContent=game.xp+"/"+game.xpNeed;$("xpbar").style.width=(game.xp/game.xpNeed*100)+"%";
+ const boss=game.bosses[0],wrap=$("bossHud");
+ if(wrap){wrap.style.display=boss?"flex":"none";if(boss){$("bossName").textContent=boss.name;$("bossbar").style.width=(boss.hp/boss.maxHP*100)+"%";$("bossbar").style.background=boss.hp/boss.maxHP>.5?"#65a96b":boss.hp/boss.maxHP>.25?"#d6ad45":"#cf5555"}}
+}
+function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function draw(){
+ ctx.clearRect(0,0,W,H);ctx.fillStyle="#a9c69a";ctx.fillRect(0,0,W,FLOOR);
+ ctx.fillStyle="#91b784";for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(i*145+35,390,75,Math.PI,0);ctx.fill()}
+ ctx.fillStyle="#c4a77e";ctx.fillRect(0,FLOOR,W,H-FLOOR);ctx.fillStyle="#e0c99f";ctx.fillRect(0,FLOOR-4,W,7);
+ for(let i=0;i<16;i++){ctx.fillStyle="#b79a72";ctx.fillRect(i*65+12,FLOOR+25,35,3)}
+ const p=game.player;
+ function actor(x,y,color,face,scale){
+  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+  ctx.fillStyle="#0002";ctx.beginPath();ctx.ellipse(0,3,20,6,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=color;ctx.strokeStyle="#302d29";ctx.lineWidth=3;ctx.fillRect(-15,-39,30,35);ctx.strokeRect(-15,-39,30,35);
+  ctx.fillStyle="#f1d2ad";ctx.beginPath();ctx.arc(0,-47,13,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle="#fff";ctx.fillRect(face>0?2:-10,-51,7,8);ctx.fillStyle="#252525";ctx.fillRect(face>0?5:-7,-49,3,4);
+  ctx.restore();
+ }
+ if(!(p.invuln>0&&Math.floor(game.t*22)%2===0))actor(p.x,p.y,"#6685a8",p.face,1);
+ if(p.attackTimer>0){ctx.strokeStyle="#fff0b5";ctx.lineWidth=8;ctx.beginPath();ctx.arc(p.x+p.attackDir*24,p.y-36,43,p.attackDir>0?-.85:Math.PI-.85,p.attackDir>0?.85:Math.PI+.85);ctx.stroke()}
+ game.enemies.forEach(e=>{
+  const color=e.flash>0?"#fff":e.type==="goblin"?"#879d65":e.type==="skeleton"?"#ddd8c9":e.type==="hover"?"#a99bc6":"#b78b67";
+  if(e.elite){ctx.strokeStyle=["","#d8d8d8","#e5a33c","#d94d5b"][e.elite];ctx.lineWidth=4+e.elite;ctx.beginPath();ctx.arc(e.x,e.y-35,27+e.elite*5,0,Math.PI*2);ctx.stroke()}
+  if(e.state==="windup"||e.state==="charge"||e.state==="aim"){ctx.fillStyle="#d94b4b55";ctx.beginPath();ctx.ellipse(e.x+(e.face||1)*30,e.y-25,38,22,0,0,Math.PI*2);ctx.fill()}
+  actor(e.x,e.y,color,e.face||1,e.type==="hover"?.8:1);
+ });
+ game.bosses.forEach(b=>{
+  ctx.save();ctx.translate(b.x,b.y);ctx.fillStyle="#0002";ctx.beginPath();ctx.ellipse(0,5,b.w*.48,9,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=b.flash>0?"#fff":b.index===0?"#7b8d80":b.index===1?"#bd6952":"#756b8e";
+  ctx.strokeStyle="#292929";ctx.lineWidth=5;ctx.fillRect(-b.w/2,-b.h,b.w,b.h);ctx.strokeRect(-b.w/2,-b.h,b.w,b.h);
+  ctx.fillStyle="#f6e6cb";ctx.fillRect(-b.w*.28,-b.h*.72,18,17);ctx.fillRect(b.w*.08,-b.h*.72,18,17);ctx.fillStyle="#222";ctx.fillRect(-b.w*.22,-b.h*.68,7,10);ctx.fillRect(b.w*.14,-b.h*.68,7,10);ctx.restore();
+ });
+ game.projectiles.forEach(b=>{ctx.fillStyle=b.kind==="arrow"?"#8d6a45":"#d65d4c";ctx.beginPath();ctx.arc(b.x,b.y,7,0,Math.PI*2);ctx.fill()});
+ game.damageTexts.forEach(d=>{ctx.globalAlpha=Math.max(0,d.life/.8);ctx.fillStyle=d.color;ctx.font="bold 16px sans-serif";ctx.textAlign="center";ctx.fillText(d.text,d.x,d.y);ctx.globalAlpha=1});
+ ctx.textAlign="left";
+ if(!game.active){ctx.fillStyle="#172333aa";ctx.fillRect(0,210,W,90);ctx.fillStyle="#fff";ctx.font="bold 26px sans-serif";ctx.textAlign="center";ctx.fillText("ステージ開始を押してください",W/2,265);ctx.textAlign="left"}
+}
+function loop(now){
+ if(!game.active)return;const dt=Math.min(.04,(now-game.last)/1000||0);game.last=now;
+ if(!game.paused)update(dt);draw();if(game.active)requestAnimationFrame(loop);
+}
+function startGame(mode){
+ document.body.classList.add("battle-mode");
+ game.active=true;game.paused=false;game.ended=false;game.t=0;game.last=performance.now();game.spawnClock=0;
+ game.player=newPlayer();game.enemies=[];game.projectiles=[];game.bosses=[];game.damageTexts=[];game.skills=[];
+ game.xp=0;game.xpNeed=8;game.level=1;game.kills=0;game.earnedCrystal=0;game.earnedXP=0;
+ game.pendingLevels=0;game.legendUsed=false;game.skillQueue=[];game.bossesDefeated=0;game.eliteClock=0;game.keys={};game.doubleTap={};
+ hideOverlay();showScreen("battle");updateHUD();draw();requestAnimationFrame(loop);
+}
+function finish(win,message){
+ if(game.ended)return;game.active=false;game.ended=true;game.resultWin=win;
+ if(win){state.cleared=Math.max(state.cleared,state.stage);state.stage=Math.max(state.stage,state.cleared+1);state.missionsDone.push("clear")}
+ save();
+ const title=win?"STAGE CLEAR":"GAME OVER";
+ const details=message+"<br>経過時間："+fmt(game.t)+"<br>討伐数："+game.kills+"<br>獲得魔晶："+game.earnedCrystal+"<br>獲得経験値："+game.earnedXP+"<br>到達レベル："+game.level;
+ showOverlay(title,details,'<button class="choice" id="resultRetry">再挑戦</button><button class="choice" id="resultHome">タイトルへ戻る</button>',false);
+ $("choices").querySelector("#resultHome").onclick=()=>{hideOverlay();document.body.classList.remove("battle-mode");showScreen("home")};
+ $("choices").querySelector("#resultRetry").onclick=()=>startGame();
+}
+function pauseGame(){
+ if(!game.active||game.ended)return;game.paused=true;
+ const p=game.player;
+ const stats="最大HP "+p.maxHP+" / 最大MP "+p.maxMP+" / 最大スタミナ "+p.maxStamina+
+  " / 攻撃力 "+Math.round(p.attackPower)+" / 防御力 "+p.defense+" / 移動速度 "+p.speed+
+  "<br>討伐数："+game.kills+"　経過時間："+fmt(game.t);
+ const skills=game.skills.length?game.skills.map(s=>s.name+" Lv."+s.level).join("、"):"なし";
+ showOverlay("一時停止",stats+"<br>取得スキル："+skills,
+  '<button class="choice" id="resumeCmd">戦闘に戻る</button><button class="choice" id="skillListCmd">スキル詳細</button><button class="choice" id="quitCmd">タイトルへ戻る</button>',false);
+}
+$("startBtn").onclick=()=>startGame("normal");
+$("pauseBtn").onclick=pauseGame;
+$("cmdBtn").onclick=pauseGame;
+$("choices").addEventListener("click",e=>{
+ const id=e.target.id||e.target.closest("button")?.id;
+ if(id==="resumeCmd"){hideOverlay();game.paused=false;game.last=performance.now()}
+ if(id==="skillListCmd"){
+  const list=game.skills.length?game.skills.map(s=>s.name+" Lv."+s.level+"（"+s.desc+"）").join("<br>"):"取得スキルはありません";
+  showOverlay("取得スキル一覧",list,'<button class="choice" id="resumeCmd">戻る</button>',false);
+ }
+ if(id==="quitCmd")showOverlay("確認","本当に終了しますか？",'<button class="choice" id="confirmQuit">終了する</button><button class="choice" id="resumeCmd">戻る</button>',false);
+ if(id==="confirmQuit")finish(false,"途中で終了しました");
 });
-game.projectiles=game.projectiles.filter(b=>{b.x+=b.vx;b.y+=b.vy;b.vy+=b.gravity;b.life-=dt;if(Math.abs(b.x-p.x)<20&&Math.abs(b.y-(p.y-15))<24&&p.hitCooldown<=0){p.hp-=b.damage;p.hitCooldown=.7;return false}return b.life>0&&b.x>-40&&b.x<1000&&b.y<550});
-game.enemies=game.enemies.filter(e=>{if(e.hp<=0||e.x< -90||e.x>1050){if(e.hp<=0){game.kills++;gainXP(1);let reward=e.mini?30:4+Math.floor(game.t/40);state.crystal+=reward;state.totalCrystal+=reward;if(e.mini)pickSkills(true);if(game.lifeSteal)p.hp=Math.min(p.max,p.hp+3)}return false}return true});
-if(game.boss){game.boss.x=Math.max(p.x+120,game.boss.x-.45);if(game.boss.hp<=0){let n=game.boss.n;game.boss=null;state.crystal+=100;state.totalCrystal+=100;game.xp+=4;game.bossCount=n;save()}}
-if(p.hp<=0){finish(false,"HPがなくなった！");return}if(game.t>=420&&game.bossCount<3&&!game.boss){finish(false,"最終ボスを倒せなかった！");return}
-$("clock").textContent=fmt(game.t);$("runLv").textContent=game.level;$("hpbar").style.width=Math.max(0,p.hp/p.max*100)+"%";$("hptext").textContent=Math.ceil(p.hp)+"/"+p.max;$("xptext").textContent=game.xp+"/"+game.xpNeed;$("xpbar").style.width=Math.min(100,game.xp/game.xpNeed*100)+"%";
+$("overlayClose").onclick=()=>{hideOverlay();game.paused=false;game.last=performance.now()};
+function keyDown(e){
+ const code=e.code;
+ if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Space"].includes(code))e.preventDefault();
+ if(code==="Escape"){if(game.active&&!game.paused)pauseGame();else if(game.paused){hideOverlay();game.paused=false;game.last=performance.now()}return}
+ if(code==="ArrowLeft"||code==="KeyA"){if(!game.keys.left)tryDoubleTap(-1);game.keys.left=true}
+ if(code==="ArrowRight"||code==="KeyD"){if(!game.keys.right)tryDoubleTap(1);game.keys.right=true}
+ if((code==="Space"||code==="ArrowUp"||code==="KeyW")&&!e.repeat)jump();
+ if(code==="KeyJ"&&!e.repeat)attack();
 }
-function gainXP(n){game.xp+=n;if(game.xp>=game.xpNeed){game.xp-=game.xpNeed;game.level++;game.xpNeed=Math.ceil(game.xpNeed*1.45);pickSkills(false)}}
-function fmt(t){let m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
-function draw(){ctx.clearRect(0,0,960,540);ctx.fillStyle="#f7f5ef";ctx.fillRect(0,0,960,540);ctx.fillStyle="#e7e3db";ctx.fillRect(0,425,960,115);ctx.strokeStyle="#c9c3b8";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,425);ctx.lineTo(960,425);ctx.stroke();ctx.fillStyle="#e9e5dd";for(let x=35;x<960;x+=150){ctx.beginPath();ctx.arc(x,425,35,Math.PI,Math.PI*2);ctx.fill()}let p=game.player;ctx.fillStyle="#0002";ctx.beginPath();ctx.ellipse(p.x,431,23,6,0,0,Math.PI*2);ctx.fill();let pc=state.character==="魔法使い"?"#bdb8c9":state.character==="弓使い"?"#b8c5ba":"#b9c4d0";ctx.fillStyle=pc;ctx.strokeStyle="#292929";ctx.lineWidth=3;ctx.fillRect(p.x-18,p.y-35,36,36);ctx.strokeRect(p.x-18,p.y-35,36,36);ctx.fillStyle="#fff";ctx.fillRect(p.x+(p.face>0?1:-13),p.y-25,9,10);ctx.fillRect(p.x+(p.face>0?13:-1),p.y-25,9,10);ctx.fillStyle="#222";ctx.fillRect(p.x+(p.face>0?4:-10),p.y-22,4,5);ctx.fillRect(p.x+(p.face>0?16:2),p.y-22,4,5);ctx.fillRect(p.x-4,p.y-9,8,2);if(p.attack>0){ctx.strokeStyle="#555";ctx.lineWidth=7;ctx.beginPath();ctx.arc(p.x+p.face*24,p.y-17,38,-.85,.85);ctx.stroke()}
-game.enemies.forEach(e=>{let danger=e.state==="charge"||(e.type==="beast"&&Math.abs(p.x-e.x)<34),wind=e.state==="windup",blink=e.type==="skeleton"&&e.state==="aim"&&Math.floor(game.t*14)%2===0;let cx=e.x,cy=e.y-12;let col=e.hitFlash>0?"#fff":e.type==="goblin"?"#bdbdbd":e.type==="skeleton"?"#e3e0d9":e.type==="hover"?"#c7c4d4":"#d0d0ca";if(danger||wind){ctx.fillStyle=danger?"#d9535366":"#e7a2a266";ctx.beginPath();ctx.ellipse(cx+e.dir*35,cy+12,e.type==="hover"?42:39,25,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#c64d4d";ctx.lineWidth=3;ctx.stroke()}if(!blink){ctx.fillStyle=col;ctx.strokeStyle="#292929";ctx.lineWidth=3;if(e.type==="beast"){ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fill();ctx.stroke()}else if(e.type==="skeleton"){ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#292929";ctx.fillRect(cx-11,cy+9,22,4)}else if(e.type==="hover"){ctx.beginPath();ctx.ellipse(cx,cy,21,16,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(cx-18,cy-9);ctx.lineTo(cx-28,cy-23);ctx.moveTo(cx+18,cy-9);ctx.lineTo(cx+28,cy-23);ctx.stroke()}else{ctx.fillRect(cx-17,cy-19,34,36);ctx.strokeRect(cx-17,cy-19,34,36)}ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(cx-7,cy-4,5,0,Math.PI*2);ctx.arc(cx+7,cy-4,5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#222";ctx.beginPath();ctx.arc(cx-6,cy-4,2,0,Math.PI*2);ctx.arc(cx+8,cy-4,2,0,Math.PI*2);ctx.fill();ctx.fillStyle="#222";ctx.fillRect(cx-4,cy+9,8,2)}ctx.fillStyle="#333";ctx.fillRect(cx-21,cy-32,42,5);ctx.fillStyle="#777";ctx.fillRect(cx-21,cy-32,42*Math.max(0,e.hp/e.max),5)});
-game.projectiles.forEach(b=>{ctx.fillStyle="#c84f4f";ctx.strokeStyle="#752e2e";ctx.lineWidth=2;ctx.beginPath();ctx.arc(b.x,b.y,7,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle="#c84f4f";ctx.beginPath();ctx.moveTo(b.x-10,b.y-4);ctx.lineTo(b.x+10,b.y+4);ctx.stroke()});
-if(game.boss){let b=game.boss;ctx.fillStyle="#d4d0c8";ctx.strokeStyle="#222";ctx.lineWidth=4;ctx.fillRect(b.x-b.w/2,b.y-b.h/2,b.w,b.h);ctx.strokeRect(b.x-b.w/2,b.y-b.h/2,b.w,b.h);ctx.fillStyle="#fff";ctx.fillRect(b.x-29,b.y-22,19,17);ctx.fillRect(b.x+10,b.y-22,19,17);ctx.fillStyle="#222";ctx.fillRect(b.x-23,b.y-18,8,10);ctx.fillRect(b.x+16,b.y-18,8,10);ctx.fillRect(b.x-9,b.y+10,18,4);ctx.fillStyle="#222";ctx.fillRect(b.x-75,b.y-75,150,9);ctx.fillStyle="#c95c5c";ctx.fillRect(b.x-75,b.y-75,150*Math.max(0,b.hp/b.max),9);ctx.fillStyle="#222";ctx.font="bold 18px sans-serif";ctx.fillText("BOSS "+b.n,b.x-38,b.y-90);ctx.fillText("残り "+Math.max(0,Math.ceil(b.deadline-game.t))+"秒",b.x-42,b.y+70)}
-ctx.fillStyle="#333";ctx.font="bold 16px sans-serif";ctx.fillText("敵撃破 "+game.kills+"  /  スキル "+game.skills.length,18,25);if(!game.active){ctx.fillStyle="#222a";ctx.fillRect(0,210,960,90);ctx.fillStyle="#fff";ctx.font="bold 26px sans-serif";ctx.textAlign="center";ctx.fillText("ステージ開始を押してください",480,265);ctx.textAlign="left"}}
-function loop(now){if(!game.active)return;let dt=Math.min(.04,(now-game.last)/1000||0);game.last=now;if(!game.paused)update(dt);draw();if(game.active)requestAnimationFrame(loop)}
-function finish(win,message){game.active=false;game.ended=true;let title=win?"STAGE CLEAR":"GAME OVER";if(win){state.cleared=Math.max(state.cleared,state.stage);state.stage=Math.max(state.stage,state.cleared+1);state.playerLv++;state.points++;state.crystal+=150;state.totalCrystal+=150;state.missionsDone.push("clear")}save();showOverlay(title,message+'　獲得魔晶：'+(win?150:0),'<button class="choice" id="resultHome">ホームへ</button><button class="choice" id="resultRetry">もう一度挑戦</button>');$("choices").querySelector("#resultHome").onclick=()=>{hideOverlay();document.body.classList.remove("battle-mode");showScreen("home")};$("choices").querySelector("#resultRetry").onclick=()=>startGame()}
-function jump(){let p=game.player;if(p.onGround){p.vy=-12;p.onGround=false;p.jumps=1}else if(game.doubleJump&&p.jumps<2){p.vy=-11;p.jumps++}}
-function keyDown(e){if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();if(e.code==="ArrowLeft")game.keys.left=true;if(e.code==="ArrowRight")game.keys.right=true;if(e.code==="Space"&&!e.repeat)jump();if(e.code==="KeyZ")game.keys.attack=true;if(e.code==="KeyX")$("cmdBtn").click()}function keyUp(e){if(e.code==="ArrowLeft")game.keys.left=false;if(e.code==="ArrowRight")game.keys.right=false;if(e.code==="KeyZ")game.keys.attack=false}
+function keyUp(e){if(e.code==="ArrowLeft"||e.code==="KeyA")game.keys.left=false;if(e.code==="ArrowRight"||e.code==="KeyD")game.keys.right=false}
 window.addEventListener("keydown",keyDown);window.addEventListener("keyup",keyUp);
-function hold(id,key){let b=$(id);b.onpointerdown=e=>{e.preventDefault();game.keys[key]=true};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>game.keys[key]=false}
-hold("leftBtn","left");hold("rightBtn","right");hold("attackBtn","attack");$("jumpBtn").onclick=jump;
-document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>{let type=b.dataset.gacha,cost=type==="s1"?5:1;if(state.gems<cost)return alert("ガチャ石が足りません");state.gems-=cost;let result;if(type==="s1"){result=Math.random()<.025?"S1装備：星喰いの剣":Math.random()<.2?"レジェンド装備：紅蓮の鎧":"レア装備：守護の盾";state.gear.push({name:result.split("：")[1],rarity:result.split("装備：")[0].replace("S1","S1")||"レア",element:"炎"})}else if(type==="pet"){result=Math.random()<.2?"ペット：月うさぎ":"ペット：風の精霊";state.pets.push(result.split("：")[1])}else{result=Math.random()<.15?"キャラクター：魔法使い":"装備：旅人の剣";if(result.startsWith("キャラクター"))state.charLevels["魔法使い"]??=1;else state.gear.push({name:"旅人の剣",rarity:"ノーマル",element:"ノーマル"})}$("gachaResult").style.display="block";$("gachaResult").textContent="獲得："+result;save();renderLists()});
-$("signupBtn").onclick=()=>auth("signup");$("loginBtn").onclick=()=>auth("login");$("logoutBtn").onclick=()=>auth("logout");$("bugBtn").onclick=$("contactBtn").onclick=()=>{let t=$("reportText").value.trim();if(!t)return alert("内容を入力してください");alert("Supabase接続後に送信できるようになります。現在は送信されていません。");$("reportText").value=""};$("deleteBtn").onclick=()=>alert("アカウント削除は、ログイン後に本人確認を行う安全なサーバー処理として実装します。");
-const SUPABASE_URL="YOUR_SUPABASE_URL";const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";let sb=null,user=null;
-async function auth(kind){if(!SUPABASE_URL.startsWith("https://")||SUPABASE_ANON_KEY.startsWith("YOUR_")){$("accountMessage").textContent="SupabaseのURLと公開用anon keyを設定すると利用できます。現在はゲストプレイです。";return}try{if(!sb){let mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");sb=mod.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}let email=$("email").value,password=$("password").value;if(kind==="signup"){let r=await sb.auth.signUp({email,password});if(r.error)throw r.error;$("accountMessage").textContent="登録を受け付けました。メール確認が必要な場合があります。"}else if(kind==="login"){let r=await sb.auth.signInWithPassword({email,password});if(r.error)throw r.error;user=r.data.user;$("authState").textContent="ログイン中";$("accountMessage").textContent="ログインしました。"}else{await sb.auth.signOut();user=null;$("authState").textContent="ゲストプレイ";$("accountMessage").textContent="ログアウトしました。"}}catch(e){$("accountMessage").textContent="エラー："+e.message}}
-renderMeta();draw();
-</script></body></htmlfunction spawnEnemy(){let elapsed=game.t,scale=1+elapsed/95+(state.stage-1)*.75;let roll=Math.random(),type=roll<.34?"beast":roll<.61?"goblin":roll<.84?"skeleton":"hover";let x=Math.random()<.5?-35:995;let hp=Math.round((type==="goblin"?32:type==="skeleton"?22:type==="hover"?26:28)*scale);game.enemies.push({type,x,y:type==="hover"?250:390,w:type==="goblin"?40:34,h:type==="goblin"?48:36,hp,max:hp,speed:(type==="beast"?1.25:type==="goblin"?1.05:type==="skeleton"?.65:1.0)+scale*.16,damage:8+scale*2,mini:false,state:"approach",stateTime:0,attackCooldown:0,flash:0,hitFlash:0,dir:0});}
-
-function spawnBoss(){let n=game.bossCount+1;let scale=1+game.t/110+(state.stage-1)*.8;game.boss={x:790,y:350,w:100,h:105,hp:Math.round(260*scale),max:Math.round(260*scale),damage:18+scale*4,deadline:game.t+60,n};game.bossCount=n}
-function update(dt){if(!game.active||game.paused||game.ended)return;let p=game.player;game.t+=dt;let speed=game.speed||4;p.vx=(game.keys.right?speed:0)-(game.keys.left?speed:0);if(p.vx)p.face=Math.sign(p.vx);p.x=Math.max(15,Math.min(900,p.x+p.vx));p.vy+=.55;p.y+=p.vy;if(p.y>=390){p.y=390;p.vy=0;p.onGround=true;p.jumps=0}else p.onGround=false;if(p.attack>0)p.attack-=dt;if(game.keys.attack&&p.attack<=0){p.attack=.32;let hit=false;game.enemies.forEach(e=>{if(Math.abs(e.x-p.x)<90&&Math.abs(e.y-p.y)<70){e.hp-=game.damage;hit=true}});if(game.boss&&Math.abs(game.boss.x-p.x)<145)game.boss.hp-=game.damage;if(hit&&game.lifeSteal)p.hp=Math.min(p.max,p.hp+2)}
-if(game.t>=120&&game.bossCount<1&&!game.boss)spawnBoss();if(game.t>=240&&game.bossCount<2&&!game.boss)spawnBoss();if(game.t>=360&&game.bossCount<3&&!game.boss)spawnBoss();
-if(game.boss&&game.t>game.boss.deadline){finish(false,"ボスを制限時間内に倒せなかった！");return}
-if(game.t>=420&&!game.boss&&game.bossCount===3){finish(true,"最終ボス撃破！ステージクリア！");return}
-game.spawn+=dt;if(game.spawn>Math.max(.55,2.0-game.t/300)){game.spawn=0;spawnEnemy()}
-if(game.miniAt>0&&game.t>=game.miniAt){game.miniAt=0;game.enemies.push({x:1000,y:365,w:65,h:75,hp:120+state.stage*35,max:120+state.stage*35,speed:1.3,damage:14,mini:true})}
-game.enemies.forEach(e=>{e.x-=e.speed;if(Math.abs(e.x-p.x)<34&&Math.abs(e.y-p.y)<60){if(Math.random()<dt*1.6)p.hp-=e.damage*dt*2}});game.enemies=game.enemies.filter(e=>{if(e.hp<=0||e.x< -70){if(e.hp<=0){game.kills++;gainXP(1);let reward=e.mini?30:4+Math.floor(game.t/40);state.crystal+=reward;state.totalCrystal+=reward;if(e.mini){pickSkills(true)}if(game.lifeSteal)p.hp=Math.min(p.max,p.hp+3)}return false}return true});
-if(game.boss){game.boss.x=Math.max(p.x+120,game.boss.x-.45);if(Math.abs(game.boss.x-p.x)<140&&Math.random()<dt*.7)p.hp-=0;if(game.boss.hp<=0){let n=game.boss.n;game.boss=null;state.crystal+=100;state.totalCrystal+=100;game.xp+=4;game.bossCount=n;if(n<3)game.bossCount=n;else game.bossCount=3;save();}}
-if(p.hp<=0){finish(false,"HPがなくなった！");return}if(game.t>=420&&game.bossCount<3&&!game.boss){finish(false,"最終ボスを倒せなかった！");return}
-$("clock").textContent=fmt(game.t);$("runLv").textContent=game.level;$("hpbar").style.width=Math.max(0,p.hp/p.max*100)+"%";$("hptext").textContent=Math.ceil(p.hp)+"/"+p.max;$("xptext").textContent=game.xp+"/"+game.xpNeed;$("xpbar").style.width=Math.min(100,game.xp/game.xpNeed*100)+"%";
-}
-function gainXP(n){game.xp+=n;if(game.xp>=game.xpNeed){game.xp-=game.xpNeed;game.level++;game.xpNeed=Math.ceil(game.xpNeed*1.45);pickSkills(false)}}
-function fmt(t){let m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
-function draw(){ctx.clearRect(0,0,960,540);ctx.fillStyle="#9acb91";ctx.fillRect(0,0,960,440);ctx.fillStyle="#82b87c";for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(i*145+35,365,75,Math.PI,0);ctx.fill()}ctx.fillStyle="#b78c5c";ctx.fillRect(0,440,960,100);ctx.fillStyle="#d5b27b";ctx.fillRect(0,438,960,7);let p=game.player;ctx.fillStyle="#31433755";ctx.beginPath();ctx.ellipse(p.x,445,25,7,0,0,Math.PI*2);ctx.fill();let playerColor=state.character==="魔法使い"?"#9274d4":state.character==="弓使い"?"#4caa78":"#4d83cf";ctx.fillStyle=playerColor;ctx.fillRect(p.x-18,p.y-35,36,36);ctx.fillStyle="#fff";ctx.fillRect(p.x+(p.face>0?1:-13),p.y-25,9,10);ctx.fillRect(p.x+(p.face>0?13:-1),p.y-25,9,10);ctx.fillStyle="#182334";ctx.fillRect(p.x+(p.face>0?4:-10),p.y-22,4,5);ctx.fillRect(p.x+(p.face>0?16:2),p.y-22,4,5);ctx.fillRect(p.x-4,p.y-9,8,3);if(p.attack>0){ctx.strokeStyle="#ffe18a";ctx.lineWidth=8;ctx.beginPath();ctx.arc(p.x+p.face*25,p.y-17,38,-.85,.85);ctx.stroke()}game.enemies.forEach(e=>{let r=e.mini?29:19;ctx.fillStyle=e.mini?"#a85b9c":"#72b96a";ctx.beginPath();ctx.arc(e.x,e.y-12,r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(e.x-7,e.y-17,e.mini?7:5,0,Math.PI*2);ctx.arc(e.x+7,e.y-17,e.mini?7:5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#1b2533";ctx.beginPath();ctx.arc(e.x-6,e.y-16,2.5,0,Math.PI*2);ctx.arc(e.x+8,e.y-16,2.5,0,Math.PI*2);ctx.fill();ctx.fillRect(e.x-4,e.y-5,8,2);ctx.fillStyle="#1a202b";ctx.fillRect(e.x-22,e.y-48,44,5);ctx.fillStyle="#e65c63";ctx.fillRect(e.x-22,e.y-48,44*Math.max(0,e.hp/e.max),5)});if(game.boss){let b=game.boss;ctx.fillStyle="#b65b65";ctx.fillRect(b.x-b.w/2,b.y-b.h/2,b.w,b.h);ctx.fillStyle="#fff";ctx.fillRect(b.x-29,b.y-22,19,17);ctx.fillRect(b.x+10,b.y-22,19,17);ctx.fillStyle="#17202b";ctx.fillRect(b.x-23,b.y-18,8,10);ctx.fillRect(b.x+16,b.y-18,8,10);ctx.fillRect(b.x-9,b.y+10,18,4);ctx.fillStyle="#141b29";ctx.fillRect(b.x-75,b.y-75,150,9);ctx.fillStyle="#ed5364";ctx.fillRect(b.x-75,b.y-75,150*Math.max(0,b.hp/b.max),9);ctx.fillStyle="#fff";ctx.font="bold 18px sans-serif";ctx.fillText("BOSS "+b.n,b.x-38,b.y-90);ctx.fillText("残り "+Math.max(0,Math.ceil(b.deadline-game.t))+"秒",b.x-42,b.y+70)}ctx.fillStyle="#fff";ctx.font="bold 16px sans-serif";ctx.fillText("敵撃破 "+game.kills+"  /  スキル "+game.skills.length,18,25);if(!game.active){ctx.fillStyle="#172333cc";ctx.fillRect(0,210,960,90);ctx.fillStyle="#fff";ctx.font="bold 26px sans-serif";ctx.textAlign="center";ctx.fillText("ステージ開始を押してください",480,265);ctx.textAlign="left"}}
-function loop(now){if(!game.active)return;let dt=Math.min(.04,(now-game.last)/1000||0);game.last=now;if(!game.paused)update(dt);draw();if(game.active)requestAnimationFrame(loop)}
-function finish(win,message){game.active=false;game.ended=true;let title=win?"STAGE CLEAR":"GAME OVER";if(win){state.cleared=Math.max(state.cleared,state.stage);state.stage=Math.max(state.stage,state.cleared+1);state.playerLv++;state.points++;state.crystal+=150;state.totalCrystal+=150;state.missionsDone.push("clear")}save();showOverlay(title,message+'　獲得魔晶：'+(win?150:0),'<button class="choice" id="resultHome">ホームへ</button><button class="choice" id="resultRetry">もう一度挑戦</button>');$("choices").querySelector("#resultHome").onclick=()=>{hideOverlay();showScreen("home")};$("choices").querySelector("#resultRetry").onclick=()=>startGame()}
-function jump(){let p=game.player;if(p.onGround){p.vy=-12;p.onGround=false;p.jumps=1}else if(game.doubleJump&&p.jumps<2){p.vy=-11;p.jumps++}}
-function keyDown(e){if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault();if(e.code==="ArrowLeft")game.keys.left=true;if(e.code==="ArrowRight")game.keys.right=true;if(e.code==="Space"&&!e.repeat)jump();if(e.code==="KeyZ")game.keys.attack=true;if(e.code==="KeyX")$("cmdBtn").click()}function keyUp(e){if(e.code==="ArrowLeft")game.keys.left=false;if(e.code==="ArrowRight")game.keys.right=false;if(e.code==="KeyZ")game.keys.attack=false}
-window.addEventListener("keydown",keyDown);window.addEventListener("keyup",keyUp);
-function hold(id,key){let b=$(id);b.onpointerdown=e=>{e.preventDefault();game.keys[key]=true};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>game.keys[key]=false}
-hold("leftBtn","left");hold("rightBtn","right");hold("attackBtn","attack");$("jumpBtn").onclick=jump;
-document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>{let type=b.dataset.gacha,cost=type==="s1"?5:1;if(state.gems<cost)return alert("ガチャ石が足りません");state.gems-=cost;let result;if(type==="s1"){result=Math.random()<.025?"S1装備：星喰いの剣":Math.random()<.2?"レジェンド装備：紅蓮の鎧":"レア装備：守護の盾";state.gear.push({name:result.split("：")[1],rarity:result.split("装備：")[0].replace("S1","S1")||"レア",element:"炎"})}else if(type==="pet"){result=Math.random()<.2?"ペット：月うさぎ":"ペット：風の精霊";state.pets.push(result.split("：")[1])}else{result=Math.random()<.15?"キャラクター：魔法使い":"装備：旅人の剣";if(result.startsWith("キャラクター"))state.charLevels["魔法使い"]??=1;else state.gear.push({name:"旅人の剣",rarity:"ノーマル",element:"ノーマル"})}$("gachaResult").style.display="block";$("gachaResult").textContent="獲得："+result;save();renderLists()});
-$("signupBtn").onclick=()=>auth("signup");$("loginBtn").onclick=()=>auth("login");$("logoutBtn").onclick=()=>auth("logout");$("bugBtn").onclick=$("contactBtn").onclick=()=>{let t=$("reportText").value.trim();if(!t)return alert("内容を入力してください");alert("Supabase接続後に送信できるようになります。現在は送信されていません。");$("reportText").value=""};$("deleteBtn").onclick=()=>alert("アカウント削除は、ログイン後に本人確認を行う安全なサーバー処理として実装します。");
-const SUPABASE_URL="YOUR_SUPABASE_URL";const SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY";let sb=null,user=null;
-async function auth(kind){if(!SUPABASE_URL.startsWith("https://")||SUPABASE_ANON_KEY.startsWith("YOUR_")){$("accountMessage").textContent="SupabaseのURLと公開用anon keyを設定すると利用できます。現在はゲストプレイです。";return}try{if(!sb){let mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");sb=mod.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}let email=$("email").value,password=$("password").value;if(kind==="signup"){let r=await sb.auth.signUp({email,password});if(r.error)throw r.error;$("accountMessage").textContent="登録を受け付けました。メール確認が必要な場合があります。"}else if(kind==="login"){let r=await sb.auth.signInWithPassword({email,password});if(r.error)throw r.error;user=r.data.user;$("authState").textContent="ログイン中";$("accountMessage").textContent="ログインしました。"}else{await sb.auth.signOut();user=null;$("authState").textContent="ゲストプレイ";$("accountMessage").textContent="ログアウトしました。"}}catch(e){$("accountMessage").textContent="エラー："+e.message}}
-renderMeta();draw();
+function hold(id,key){const b=$(id);if(!b)return;b.onpointerdown=e=>{e.preventDefault();if(key==="attack")attack();else if(key==="jump")jump();else{if(!game.keys[key])tryDoubleTap(key==="left"?-1:1);game.keys[key]=true}};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{if(key==="left"||key==="right")game.keys[key]=false}}
+hold("leftBtn","left");hold("rightBtn","right");hold("attackBtn","attack");hold("jumpBtn","jump");
+document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>{
+ const type=b.dataset.gacha,cost=type==="s1"?5:1;if(state.gems<cost)return alert("ガチャ石が足りません");
+ state.gems-=cost;let result;
+ if(type==="s1"){result=Math.random()<.025?"S1装備：星喰いの剣":Math.random()<.2?"レジェンド装備：紅蓮の鎧":"レア装備：守護の盾";state.gear.push({name:result.split("：")[1],rarity:result.split("装備：")[0],element:"炎"})}
+ else if(type==="pet"){result=Math.random()<.2?"ペット：月うさぎ":"ペット：風の精霊";state.pets.push(result.split("：")[1])}
+ else{result=Math.random()<.15?"キャラクター：魔法使い":"装備：旅人の剣";if(result.startsWith("キャラクター"))state.charLevels["魔法使い"]??=1;else state.gear.push({name:"旅人の剣",rarity:"ノーマル",element:"ノーマル"})}
+ $("gachaResult").style.display="block";$("gachaResult").textContent="獲得："+result;save();renderLists();
+});
+$("signupBtn").onclick=()=>auth("signup");$("loginBtn").onclick=()=>auth("login");$("logoutBtn").onclick=()=>auth("logout");
+$("bugBtn").onclick=$("contactBtn").onclick=()=>{const t=$("reportText").value.trim();if(!t)return alert("内容を入力してください");alert("Supabase接続後に送信できるようになります。現在は送信されていません。");$("reportText").value=""};
+$("deleteBtn").onclick=()=>alert("アカウント削除は、ログイン後に本人確認を行う安全なサーバー処理として実装します。");
+renderMeta();renderLists();draw();
 </script></body></html>
