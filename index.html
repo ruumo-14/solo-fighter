@@ -92,7 +92,7 @@ renderMeta();renderLists();
 const canvas=$("game"),ctx=canvas.getContext("2d");
 const W=960,H=540,FLOOR=432;
 const game={
- active:false,paused:false,ended:false,t:0,last:0,spawnClock:0,
+ active:false,paused:false,ended:false,t:0,last:0,spawnClock:0,victoryTimer:0,bossesDefeated:0,bossSpawned:[false,false,false],
  player:null,enemies:[],projectiles:[],bosses:[],damageTexts:[],skills:[],
  xp:0,xpNeed:8,level:1,kills:0,earnedCrystal:0,earnedXP:0,
  pendingLevels:0,legendUsed:false,keys:{},doubleTap:{},eliteClock:0,
@@ -122,7 +122,7 @@ function newPlayer(){
 }
 function rarityClass(r){return r==="レア"?"rare":r==="エピック"?"epic":r==="レジェンド"?"legend":"normal"}
 function showOverlay(title,txt,choices,close){
- $("overlayTitle").textContent=title;$("overlayText").textContent=txt;$("choices").innerHTML=choices||"";
+ $("overlayTitle").textContent=title;$("overlayText").innerHTML=txt;$("choices").innerHTML=choices||"";
  $("overlayClose").style.display=close?"inline-block":"none";$("overlay").classList.add("show");
 }
 function hideOverlay(){$("overlay").classList.remove("show")}
@@ -134,17 +134,19 @@ function randomRarity(){
  return "ノーマル";
 }
 function chooseSkills(bossReward){
- let pool=skillPool.filter(s=>!bossReward||s.rarity!=="ノーマル");
- pool=pool.filter(s=>!(s.rarity==="レジェンド"&&game.legendUsed));
- if(!bossReward){
-  pool=pool.filter(s=>{const r=randomRarity();return r===s.rarity});
- }
  const picks=[];
- while(pool.length&&picks.length<3){
-  const i=Math.floor(Math.random()*pool.length),s=pool.splice(i,1)[0];
-  if(!picks.some(p=>p.id===s.id))picks.push(s);
+ if(bossReward){
+  const pool=skillPool.filter(s=>s.rarity!=="ノーマル"&&!(s.rarity==="レジェンド"&&game.legendUsed));
+  while(pool.length&&picks.length<3){const i=Math.floor(Math.random()*pool.length);picks.push(pool.splice(i,1)[0])}
+  return picks;
  }
- if(!picks.length)picks.push(skillPool[0]);
+ for(let i=0;i<3;i++){
+  let rarity=randomRarity();
+  if(game.legendUsed&&rarity==="レジェンド")rarity="エピック";
+  let pool=skillPool.filter(s=>s.rarity===rarity);
+  if(!pool.length)pool=skillPool.filter(s=>s.rarity==="ノーマル");
+  picks.push(pool[Math.floor(Math.random()*pool.length)]);
+ }
  return picks;
 }
 function openSkillChoice(bossReward){
@@ -251,6 +253,8 @@ function spawnProjectile(x,y,vx,vy,damage,kind){
  game.projectiles.push({x,y,vx,vy,gravity:.18,damage,life:3,kind});
 }
 function updateEnemy(e,dt,p){
+ if(e.dead)return;
+ if(e.x<0){e.x+=e.speed;return}if(e.x>W){e.x-=e.speed;return}
  e.flash=Math.max(0,e.flash-dt);e.attackClock=Math.max(0,e.attackClock-dt);
  const dx=p.x-e.x,dist=Math.abs(dx),dir=Math.sign(dx)||-1;
  if(Math.abs(e.knockX)>0.1)e.x+=e.knockX;
@@ -279,7 +283,7 @@ function updateEnemy(e,dt,p){
 }
 function updateBoss(b,dt,p){
  if(b.dead)return;b.flash=Math.max(0,(b.flash||0)-dt);
- if(b.hp<=0){b.dead=true;game.kills++;addReward(100+50*b.index,8+4*b.index);game.skillQueue.push("boss");return}
+ if(b.hp<=0){b.dead=true;game.kills++;game.bossesDefeated++;addReward(100+50*b.index,8+4*b.index);game.skillQueue.push("boss");if(b.index===2)game.victoryTimer=1.5;return}
  if(b.hp<b.maxHP*.5)b.phase=2;
  const dir=Math.sign(p.x-b.x)||-1,dist=Math.abs(p.x-b.x);
  if(Math.abs(b.knockX)>0.1)b.x+=b.knockX;b.knockX*=Math.pow(.08,dt);
@@ -326,7 +330,7 @@ function update(dt){
   if(game.spawnClock>=Math.max(.55,1.65-game.t/520)){game.spawnClock=0;spawnEnemy()}
   game.eliteClock+=dt;if(game.eliteClock>55){game.eliteClock=0;if(Math.random()<.55)spawnElite()}
  }
- [120,240,360].forEach((at,i)=>{if(game.t>=at&&!game.bosses.some(b=>b.index===i)){spawnBoss(i)}});
+ [120,240,360].forEach((at,i)=>{if(game.t>=at&&!game.bossSpawned[i]){game.bossSpawned[i]=true;spawnBoss(i)}});
  game.enemies.forEach(e=>updateEnemy(e,dt,p));
  game.bosses.forEach(b=>updateBoss(b,dt,p));
  game.projectiles=game.projectiles.filter(b=>{
@@ -336,21 +340,16 @@ function update(dt){
  });
  resolveBodies();
  game.enemies=game.enemies.filter(e=>{
-  if(e.hp<=0){
-   game.kills++;const mult=e.elite?[1,2,3,5][e.elite]:1;
-   addReward((4+Math.floor(game.t/50))*mult,mult);damageText(e.x,e.y-30,"魔晶 +"+((4+Math.floor(game.t/50))*mult),"#e2bd52");
-   return false;
-  }
+  if(e.hp<=0&&!e.dead){e.dead=true;e.deathTimer=.35;game.kills++;const mult=e.elite?[1,2,3,5][e.elite]:1;const reward=(4+Math.floor(game.t/50))*mult;addReward(reward,mult);damageText(e.x,e.y-30,"魔晶 +"+reward,"#e2bd52")}
+  if(e.dead){e.deathTimer-=dt;return e.deathTimer>0}
   return true;
  });
  game.bosses=game.bosses.filter(b=>!b.dead);
  game.damageTexts=game.damageTexts.filter(d=>{d.y-=.7;d.life-=dt;return d.life>0});
  if(game.skillQueue.length&&!game.paused){const q=game.skillQueue.shift();openSkillChoice(q==="boss")}
  if(p.hp<=0){finish(false,"HPが0になった");return}
- if(game.t>=420){
-  if(game.bosses.length===0&&game.bosses.length>=0&&game.bossesDefeated===3)finish(true,"最後のボスを撃破！"); 
-  else finish(false,"制限時間内に最後のボスを倒せなかった");
- }
+ if(game.victoryTimer>0){game.victoryTimer-=dt;if(game.victoryTimer<=0){finish(true,"最後のボスを撃破！");return}}
+ if(game.t>=420&&game.bossesDefeated<3){finish(false,"制限時間内に最後のボスを倒せなかった");return}
  updateHUD();
 }
 function updateHUD(){
@@ -406,7 +405,7 @@ function startGame(mode){
  game.active=true;game.paused=false;game.ended=false;game.t=0;game.last=performance.now();game.spawnClock=0;
  game.player=newPlayer();game.enemies=[];game.projectiles=[];game.bosses=[];game.damageTexts=[];game.skills=[];
  game.xp=0;game.xpNeed=8;game.level=1;game.kills=0;game.earnedCrystal=0;game.earnedXP=0;
- game.pendingLevels=0;game.legendUsed=false;game.skillQueue=[];game.bossesDefeated=0;game.eliteClock=0;game.keys={};game.doubleTap={};
+ game.pendingLevels=0;game.legendUsed=false;game.skillQueue=[];game.bossesDefeated=0;game.bossSpawned=[false,false,false];game.victoryTimer=0;game.eliteClock=0;game.keys={};game.doubleTap={};
  hideOverlay();showScreen("battle");updateHUD();draw();requestAnimationFrame(loop);
 }
 function finish(win,message){
