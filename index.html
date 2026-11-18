@@ -1,525 +1,114 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
 <title>SOLO FIGHTER</title>
 <style>
-:root{--bg:#101522;--panel:#1b2538;--panel2:#26344b;--line:#40516b;--text:#f4f6fb;--muted:#aebbd0;--gold:#f5c451;--blue:#56a9ff;--red:#ff626c;--green:#69d69a}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#263750,#101522 58%);color:var(--text);font-family:system-ui,"Noto Sans JP",sans-serif}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:10px;background:#344762;color:white;padding:9px 13px}button:hover{filter:brightness(1.15)}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#2869a8;border-color:#5aa9ee}.gold{color:var(--gold)}.muted{color:var(--muted)}.wrap{max-width:1200px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.brand{font-weight:900;letter-spacing:3px;font-size:24px}.resources{display:flex;gap:8px;flex-wrap:wrap}.pill{background:#202d42;border:1px solid var(--line);padding:7px 11px;border-radius:999px}.layout{display:grid;grid-template-columns:210px 1fr;gap:14px;margin-top:16px}.nav,.panel{background:#192337;border:1px solid var(--line);border-radius:16px;padding:13px}.nav{display:flex;flex-direction:column;gap:7px}.nav button{text-align:left;background:transparent}.nav button.active{background:#314761;border-color:#6c91ba}.content{min-width:0}.screen{display:none}.screen.active{display:block}.panel{margin-bottom:12px}.panel h2,.panel h3{margin:0 0 10px}.hero{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.card{background:#222f45;border:1px solid var(--line);padding:12px;border-radius:12px}.card h3{margin:0 0 7px}.small{font-size:13px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.bar{height:10px;background:#0c1320;border-radius:20px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--green);width:100%}.gamebox{position:relative;background:#080e19;border:2px solid #526985;border-radius:14px;overflow:hidden}.gamebox canvas{display:block;width:100%;height:auto;image-rendering:pixelated}.hud{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px}.overlay{position:absolute;inset:0;background:#080e19eF;display:none;align-items:center;justify-content:center;padding:18px;text-align:center}.overlay.show{display:flex}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.choice{min-height:125px;text-align:left;background:#273850}.rarity-normal{border-color:#e8edf5}.rarity-rare{border-color:#56a9ff}.rarity-epic{border-color:#ffd34e}.rarity-legend{border-color:#ff626c}.tag{font-size:11px;padding:2px 7px;border-radius:20px;background:#101827}.normal{color:#fff}.rare{color:#56a9ff}.epic{color:#ffd34e}.legend{color:#ff626c}.controls{display:none;justify-content:center;gap:10px;margin-top:9px}.controls button{min-width:65px;min-height:48px}.list{display:grid;gap:7px}.listitem{display:flex;justify-content:space-between;gap:8px;padding:9px;background:#222f45;border-radius:9px}.field{background:#0f1828;border:1px solid var(--line);border-radius:8px;color:white;padding:9px;max-width:100%}.notice{padding:10px;background:#263a51;border-left:3px solid var(--blue);border-radius:8px}.danger{color:#ff858b}footer{padding:18px;text-align:center;color:var(--muted);font-size:12px}
-/* Friendly geometric character art and survivor-style HUD. */
-.gamebox{border-radius:18px;background:#263d35;touch-action:none}.gamebox canvas{width:100%;height:auto;aspect-ratio:16/9}.battle-top{position:absolute;z-index:2;top:12px;left:12px;right:12px;display:flex;align-items:flex-start;justify-content:space-between;pointer-events:none}.battle-top button{pointer-events:auto}.round-control{width:44px;height:44px;padding:0;border-radius:50%;font-size:20px;font-weight:900;background:#172333dd;border:2px solid #dbe7ef}.battle-timer{position:absolute;left:50%;transform:translateX(-50%);top:0;padding:6px 15px;border-radius:18px;background:#142234dd;text-align:center;font-size:22px;line-height:1.15}.battle-timer small{font-size:11px;color:#d7e0ea;margin-left:4px}.battle-stage{margin-left:auto;background:#142234dd;border-radius:12px;padding:7px 10px;text-align:right;font-size:12px}.battle-stage small{display:block;color:#d6e0e8}.battle-bars{position:absolute;z-index:2;left:14px;right:14px;top:66px;display:grid;gap:5px;pointer-events:none}.battle-barline{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;text-shadow:0 1px 3px #000}.battle-barline .bar{flex:1;height:9px;border:1px solid #e2eaf0;background:#172333dd}.battle-barline .bar>i{background:#e95b66}.battle-barline .xpbar>i{background:#65c8f2;width:0}.battle-bottom{position:absolute;z-index:2;left:18px;right:18px;bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none}.dpad,.action-pad{display:flex;gap:9px;align-items:flex-end;pointer-events:auto}.dpad button{width:58px;height:58px;border-radius:50%;padding:0;background:#172333c9;border:2px solid #dbe7ef;font-size:23px;touch-action:none}.action-button{border-radius:50%;width:76px;height:76px;padding:5px;font-weight:900;border:3px solid #f4e5b5;background:#a64a3fdd;touch-action:none}.jump-button{width:60px;height:60px;background:#426b9ddd;border-color:#c6e1ff;font-size:12px}.attack-button{width:82px;height:82px;font-size:16px}.gamebox .overlay{z-index:5}.gamebox .overlay.show{background:#08111be8}.gamebox .choices{max-height:55%;overflow:auto}.gamebox .choice{background:#24364aee}
-@media(max-width:760px){.layout{grid-template-columns:1fr}.nav{display:grid;grid-template-columns:repeat(3,1fr)}.nav button{text-align:center;padding:8px 4px;font-size:12px}.choices{grid-template-columns:1fr}.wrap{padding:9px}.gamebox{border-radius:12px}.battle-top{top:7px;left:7px;right:7px}.round-control{width:38px;height:38px}.battle-timer{font-size:18px;padding:5px 10px}.battle-bars{top:53px;left:9px;right:9px}.battle-bottom{left:9px;right:9px;bottom:9px}.dpad button{width:49px;height:49px}.attack-button{width:68px;height:68px}.jump-button{width:52px;height:52px}.battle-stage{font-size:10px;padding:5px 7px}}
-
-@media(max-width:760px){.layout{grid-template-columns:1fr}.nav{display:grid;grid-template-columns:repeat(3,1fr)}.nav button{text-align:center;padding:8px 4px;font-size:12px}.choices{grid-template-columns:1fr}.controls{display:flex}.wrap{padding:9px}}
-/* Calm monochrome picture-book style and edge-to-edge battle mode */
-:root{--bg:#f4f1eb;--panel:#fffdf8;--panel2:#e9e5dc;--line:#c9c3b8;--text:#252525;--muted:#77736c;--gold:#555;--blue:#666;--red:#c95c5c;--green:#777}
-body{background:#f4f1eb;color:#252525}
-.wrap{max-width:none;width:100%;padding:14px 18px}
-.nav,.panel{background:#fffdf8;border-color:#d5d0c7}
-.nav button{color:#292929;border-color:#d5d0c7}
-.nav button.active{background:#e8e4dc;border-color:#777}
-.pill,.card,.listitem{background:#f0ede7;border-color:#d5d0c7;color:#292929}
-button{background:#e7e3dc;border-color:#aaa39a;color:#222}
-.primary{background:#333;color:#fff;border-color:#222}
-.gamebox{background:#f8f6f1;border:0;border-radius:0;box-shadow:none}
-.gamebox canvas{width:100%;height:100%;aspect-ratio:16/9;object-fit:fill}
-.battle-top{top:14px;left:18px;right:18px;color:#222}
-.battle-timer,.battle-stage{background:#fffdf0eF;color:#222;border:1px solid #aaa39a;box-shadow:0 2px 8px #0001}
-.battle-timer small,.battle-stage small{color:#666}
-.round-control,.dpad button,.action-button{background:#fffdf0;color:#222;border:2px solid #45413b;box-shadow:0 3px 0 #0002}
-.battle-barline{color:#222;text-shadow:none}
-.battle-barline .bar{background:#ddd;border:1px solid #777}
-.battle-barline .bar>i{background:#555}
-.battle-barline .xpbar>i{background:#999}
-.dpad button{font-weight:900}
-.jump-button{background:#eee;border-color:#555}
-.attack-button{background:#333;color:#fff;border-color:#222}
-.gamebox .overlay.show{background:#222222d9}
-.gamebox .overlay h2,.gamebox .overlay p{color:#fff}
-.gamebox .choice{background:#fffdf8;color:#222}
-body.battle-mode{overflow:hidden;background:#171717}
-body.battle-mode .wrap{width:100vw;height:100dvh;max-width:none;padding:0;margin:0}
-body.battle-mode header.top,body.battle-mode nav.nav,body.battle-mode footer{display:none!important}
-body.battle-mode .layout{display:block;margin:0;width:100%;height:100%}
-body.battle-mode main.content{width:100%;height:100%;min-width:0}
-body.battle-mode #battle{display:block!important;width:100%;height:100%}
-body.battle-mode #battle>.panel{margin:0;padding:0;border:0;border-radius:0;background:#171717;width:100%;height:100%;display:flex;flex-direction:column}
-body.battle-mode .gamebox{flex:1;width:100%;height:100%;min-height:0;border:0;border-radius:0;background:#171717;display:flex;align-items:center;justify-content:center}
-body.battle-mode .gamebox canvas{width:100%;height:100%;max-height:100dvh;aspect-ratio:auto;object-fit:contain}
-body.battle-mode #startBtn,body.battle-mode #cmdBtn,body.battle-mode .panel>.row{display:none!important}
-body.battle-mode .battle-top{top:12px;left:16px;right:16px}
-body.battle-mode .battle-bars{left:18px;right:18px;top:66px}
-body.battle-mode .battle-bottom{left:22px;right:22px;bottom:20px}
-body.battle-mode .overlay{border-radius:0}
-@media(max-width:760px){.wrap{padding:8px}.layout{grid-template-columns:1fr}.nav{display:grid;grid-template-columns:repeat(3,1fr)}.nav button{text-align:center;padding:8px 4px;font-size:12px}.choices{grid-template-columns:1fr}.controls{display:flex}body.battle-mode .battle-bars{top:54px}body.battle-mode .battle-bottom{bottom:12px}}
-
+:root{color-scheme:dark;--bg:#0d1422;--panel:#172338;--panel2:#202f47;--line:#344762;--text:#f4f6fb;--muted:#a8b7cc;--gold:#f3c65e;--blue:#62b6ff;--red:#ff6d78;--green:#72d9a0}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#182a43,#0d1422 60%);color:var(--text);font:15px system-ui,"Noto Sans JP",sans-serif}button,input{font:inherit}button{border:1px solid var(--line);border-radius:10px;background:#2b405d;color:white;padding:10px 13px;cursor:pointer}button:hover{filter:brightness(1.15)}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:#1769a9;border-color:#53a9ed}.gold{color:var(--gold)}.muted,.small{color:var(--muted)}.small{font-size:12px}.hidden{display:none!important}.app{max-width:1250px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.brand{font-weight:1000;letter-spacing:3px;font-size:25px}.resources{display:flex;gap:7px;flex-wrap:wrap}.pill{border:1px solid var(--line);background:#18263b;border-radius:99px;padding:7px 11px;font-size:13px}.layout{display:grid;grid-template-columns:190px 1fr;gap:13px;margin-top:14px}.nav,.panel,.card{background:rgba(22,34,53,.96);border:1px solid var(--line);border-radius:15px}.nav{padding:10px;display:flex;flex-direction:column;gap:6px;height:max-content}.nav button{text-align:left;background:transparent;border-color:transparent}.nav button.active{background:#29415f;border-color:#4c6b91}.main{min-width:0}.panel{padding:16px;min-height:470px}.panel h2{margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.card{padding:13px;background:#1c2a40}.card h3{margin:0 0 7px;font-size:16px}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}.stat>div{background:#111d30;border:1px solid var(--line);border-radius:10px;padding:10px}.bar{height:9px;border-radius:9px;background:#34445c;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#54a7ff,#72d9a0);width:0}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.item{border:1px solid var(--line);background:#111d30;border-radius:10px;padding:10px;margin:7px 0}.rarity-Normal{color:#e5e7eb}.rarity-Rare{color:#60a5fa}.rarity-Epic{color:#c084fc}.rarity-Legendary{color:#fbbf24}.rarity-S1{color:#fb7185}.notice{padding:10px;border-left:3px solid var(--gold);background:#2a2a25;border-radius:7px;margin:10px 0}.battle-wrap{position:relative}.battle-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}.battle-canvas{width:100%;display:block;background:#15243a;border:2px solid #49617d;border-radius:12px;touch-action:none}.battle-hud{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.battle-hud span{background:#111d30;padding:6px 9px;border-radius:8px;font-size:13px}.overlay{position:absolute;inset:0;background:#09111ddd;display:flex;align-items:center;justify-content:center;padding:15px;border-radius:12px}.overlay-box{max-width:560px;width:100%;background:#1b2b42;border:1px solid #607895;border-radius:15px;padding:18px}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.choice{min-height:150px;text-align:left;background:#263b56}.choice strong{display:block;margin-bottom:8px}.footer{color:var(--muted);font-size:12px;text-align:center;padding:16px}.mobile-controls{display:none;gap:8px;justify-content:center;margin-top:10px}.mobile-controls button{min-width:58px;min-height:48px}.input{background:#0d1727;color:white;border:1px solid var(--line);border-radius:8px;padding:10px;max-width:100%}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.nav{display:grid;grid-template-columns:repeat(4,1fr)}.nav button{text-align:center;padding:8px 3px;font-size:12px}.panel{min-height:420px;padding:12px}.choices{grid-template-columns:1fr}.choice{min-height:85px}.mobile-controls{display:flex}.brand{font-size:20px}.app{padding:8px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="top"><div class="brand">⚔ SOLO FIGHTER</div><div class="resources"><span class="pill">💎 魔晶 <b id="crystal">0</b></span><span class="pill">プレイヤー Lv.<b id="playerLv">1</b></span><span class="pill" id="authState">ゲストプレイ</span></div></header>
+<div class="app">
+<header class="top"><div class="brand">⚔ SOLO FIGHTER</div><div class="resources"><span class="pill">プレイヤー Lv.<b id="playerLv">1</b></span><span class="pill">魔晶 <b id="crystal">0</b></span><span class="pill">ガチャ石 <b id="gems">10</b></span><span class="pill">チケット <b id="tickets">0</b></span></div></header>
 <div class="layout">
 <nav class="nav" id="nav">
-<button class="active" data-screen="home">🏠 ホーム</button><button data-screen="battle">⚔ 戦闘</button><button data-screen="characters">🧑 キャラクター</button><button data-screen="pets">🐾 ペット</button><button data-screen="equipment">🛡 装備</button><button data-screen="gacha">🎲 ガチャ</button><button data-screen="missions">📜 ミッション</button><button data-screen="ranking">🏆 ランキング</button><button data-screen="market">🛒 マーケット</button><button data-screen="encyclopedia">📖 図鑑</button><button data-screen="chat">💬 チャット</button><button data-screen="account">⚙ アカウント</button>
+<button data-screen="home" class="active">🏠 ホーム</button><button data-screen="battle">⚔ ステージ</button><button data-screen="characters">🧑 キャラクター</button><button data-screen="equipment">🛡 装備</button><button data-screen="pets">🐾 ペット</button><button data-screen="gacha">🎁 ガチャ</button><button data-screen="shop">🛒 ショップ</button><button data-screen="missions">📜 ミッション</button><button data-screen="profile">📊 記録</button><button data-screen="settings">⚙ 設定</button>
 </nav>
-<main class="content">
-<section class="screen active" id="home"><div class="panel hero"><div><div class="muted small">冒険者ホーム</div><h1 style="margin:5px 0">戦場へ向かおう。</h1><div class="muted">6分間の戦闘を生き残り、3体のボスを撃破せよ。</div></div><button class="primary" data-go="battle">戦闘開始 ▶</button></div><div class="cards"><div class="card"><h3>プレイヤー成長</h3><p>Lv.<b id="homeLv">1</b> / 能力ポイント <b id="points">0</b></p><button data-action="unlock">能力を解放（魔晶 100）</button></div><div class="card"><h3>所持キャラクター</h3><p id="homeChars">剣士 Lv.1</p><button data-go="characters">育成する</button></div><div class="card"><h3>現在のステージ</h3><p id="stageName">草原 1</p><p class="muted small">クリアで次のステージを解放</p><button data-go="battle">挑戦する</button></div></div><div class="panel"><h3>ゲームのルール</h3><p>2分・4分・6分にボスが出現。各ボスは出現から60秒以内に撃破しよう。最後のボスを倒すとステージクリア。</p><p class="muted small">ステージ中のレベル・プレイヤーレベル・キャラクターレベルは別々に管理されます。</p></div></section>
-<section class="screen" id="battle"><div class="panel"><div class="gamebox"><canvas id="game" width="960" height="540" aria-label="2D横視点アクションゲーム"></canvas><div class="battle-top"><button id="pauseBtn" class="round-control" aria-label="一時停止">Ⅱ</button><div class="battle-timer"><b id="clock">00:00</b><small>/ 07:00</small></div><div class="battle-stage">STAGE <b id="battleStage">草原 1</b><small>Lv.<b id="runLv">1</b></small></div></div><div class="battle-bars"><div class="battle-barline"><span>XP</span><div class="bar xpbar"><i id="xpbar"></i></div><b id="xptext">0/8</b></div><div class="battle-barline" id="bossHud" style="display:none"><span id="bossName">BOSS</span><div class="bar"><i id="bossbar"></i></div></div><div class="battle-barline"><span>HP</span><div class="bar"><i id="hpbar"></i></div><b id="hptext">100/100</b></div><div class="battle-barline"><span>MP</span><div class="bar"><i id="mpbar"></i></div><b id="mptext">60/60</b></div><div class="battle-barline"><span>ST</span><div class="bar"><i id="stbar"></i></div><b id="sttext">100/100</b></div></div><div class="battle-bottom"><div class="dpad"><button id="leftBtn" aria-label="左へ">◀</button><button id="rightBtn" aria-label="右へ">▶</button></div><div class="action-pad"><button id="jumpBtn" class="action-button jump-button">ジャンプ</button><button id="attackBtn" class="action-button attack-button">攻撃</button></div></div><div class="overlay" id="overlay"><div style="max-width:720px;width:100%"><h2 id="overlayTitle">スキル選択</h2><p id="overlayText">スキルを1つ選ぼう</p><div class="choices" id="choices"></div><button id="overlayClose" style="margin-top:12px;display:none">閉じる</button></div></div></div><div class="row" style="margin-top:9px"><button id="startBtn" class="primary">通常ステージ開始</button><button id="hardStartBtn" disabled>ハード開始（プレイヤーLv.50で解放）</button><button id="cmdBtn">コマンド</button><span class="muted small">キーボード：A・D / ←・→ / Space / J / Esc</span></div></div></section>
-<section class="screen" id="characters"><div class="panel"><h2>キャラクター</h2><p class="muted">キャラクターごとに攻撃方法と特殊能力が異なります。</p><div class="cards" id="characterList"></div><div class="row" style="margin-top:12px"><button data-action="resetChar">選択キャラのレベルをリセット</button><span class="small muted">消費魔晶の90%を返還</span></div></div></section>
-<section class="screen" id="pets"><div class="panel"><h2>ペット</h2><p>ペットは直接戦闘せず、所持効果・バフでプレイヤーを補助します。</p><div id="petList" class="cards"></div></div></section>
-<section class="screen" id="equipment"><div class="panel"><h2>装備</h2><p>装備にはレアリティと属性があります。S1はS1ガチャ限定です。</p><div id="gearList" class="list"></div><p class="small muted">武器属性は特殊効果に関係します。属性同士の有利・不利によるダメージ倍率はありません。</p></div></section>
-<section class="screen" id="gacha"><div class="panel"><h2>ガチャ</h2><p>ガチャ石：初期テスト用10個。100回目はエピック以上確定。各ガチャの天井は別々に記録されます。</p><p class="small">通常ガチャ：アイテム50%／ノーマル10%／レア35%／エピック4%／レジェンド1%。</p><p class="small">S1ガチャ：アイテム50%／ノーマル10%／レア33%／エピック4%／レジェンド2%／S1 1%。</p><div class="cards"><div class="card"><h3>キャラクターガチャ</h3><p>キャラクター・通常装備</p><button data-gacha="character">1回引く（石1）</button></div><div class="card"><h3>ペットガチャ</h3><p>ペット・通常装備</p><button data-gacha="pet">1回引く（石1）</button></div><div class="card"><h3>S1ガチャ</h3><p>装備・S1装備</p><button data-gacha="s1">1回引く（石5）</button></div></div><p>所持ガチャ石：<b id="gems">10</b>　ガチャチケット：<b id="tickets">0</b></p><p class="small">天井まで：キャラクター <b id="pityCharacter">100</b>回／ペット <b id="pityPet">100</b>回／S1 <b id="pityS1">100</b>回</p><div id="gachaResult" class="notice" style="display:none"></div></div></section>
-<section class="screen" id="missions"><div class="panel"><h2>ミッション</h2><div id="missionList" class="list"></div><h3 style="margin-top:18px">ストーリークエスト</h3><p>最初の一歩：草原の魔物を倒そう。ステージクリアで進行します。</p></div></section>
-<section class="screen" id="ranking"><div class="panel"><h2>ランキング</h2><p class="muted small">オンラインランキングはSupabase接続後に集計されます。現在はローカルのテスト表示です。</p><div class="cards"><div class="card"><h3>累計魔晶獲得数</h3><p id="rankCrystal">0</p></div><div class="card"><h3>エンドレス最高到達</h3><p id="rankEndless">未挑戦</p></div><div class="card"><h3>タイムアタック</h3><p id="rankTime">未記録</p></div></div><p>週間ランキングは毎週更新、累計魔晶ランキングは数値を保持し報酬のみ毎週配布する設計です。</p></div></section>
-<section class="screen" id="market"><div class="panel"><h2>プレイヤーマーケット</h2><p>プレイヤー間取引の画面です。オンライン取引を有効にするにはSupabaseの認証・取引テーブル設定が必要です。</p><div class="notice">取引の二重購入や不正な魔晶変更を防ぐため、実際の出品・購入はサーバー側処理で確定させます。</div></div></section>
-<section class="screen" id="encyclopedia"><div class="panel"><h2>敵キャラ図鑑</h2><div class="cards"><div class="card"><h3>スライム</h3><p>属性：草</p><p>出現：草原 1</p><p class="muted small">草原に生息する小型の魔物。</p></div><div class="card"><h3>ゴブリン</h3><p>属性：炎</p><p>出現：草原 1</p><p class="muted small">群れで行動する好戦的な魔物。</p></div><div class="card"><h3>古代の守護者</h3><p>属性：水</p><p>出現：草原 1（ボス）</p><p class="muted small">遺跡を守る大型の魔物。</p></div></div></div></section>
-<section class="screen" id="chat"><div class="panel"><h2>全体チャット</h2><p class="muted">オンラインチャットはSupabase接続後に有効になります。個人情報・連絡先を書かず、迷惑行為をしないでください。</p><div id="chatMessages" class="list"><div class="listitem">システム：チャット接続待ち</div></div><div class="row" style="margin-top:10px"><input id="chatInput" class="field" placeholder="メッセージ（接続後に送信）" maxlength="180"><button disabled>送信</button></div></div></section>
-<section class="screen" id="account"><div class="panel"><h2>アカウント</h2><p>ゲスト状態ではこの端末にセーブされます。Supabase設定後に新規登録・ログイン・クラウド保存が利用できます。</p><div class="row"><input id="email" class="field" type="email" placeholder="メールアドレス"><input id="password" class="field" type="password" placeholder="パスワード"></div><div class="row" style="margin-top:9px"><button id="signupBtn" class="primary">新規登録</button><button id="loginBtn">ログイン</button><button id="logoutBtn">ログアウト</button></div><p id="accountMessage" class="small muted"></p><hr style="border-color:var(--line)"><h3>問い合わせ・バグ報告</h3><textarea id="reportText" class="field" rows="3" style="width:100%" maxlength="1000" placeholder="不具合の内容・再現手順（パスワード等は書かないでください）"></textarea><div class="row" style="margin-top:8px"><button id="bugBtn">バグを報告</button><button id="contactBtn">問い合わせ</button></div><p class="small muted">管理者機能はサーバー側で権限を検証します。ブラウザ上の表示切替だけで管理者権限は得られません。</p><button id="deleteBtn" class="danger">アカウント削除について</button></div><div class="panel"><h3>利用規約（概要）</h3><p class="small">不正アクセス、チート、他者への嫌がらせ、バグや運営のミスを利用した不当な利益獲得は禁止です。違反時は調査のうえ、警告・一時停止・アカウント停止等の相応の措置を行う場合があります。アカウント情報を安全に管理し、他人の個人情報や不適切な内容を投稿しないでください。正式公開前に詳細な規約・プライバシーポリシーを整備します。</p><label class="small"><input id="termsCheck" type="checkbox"> 利用規約に同意する（テスト用）</label></div></section>
-</main></div><footer>SOLO FIGHTER · 開発テスト版 · セーブは端末内に保存されます</footer></div>
+<main class="main">
+<section class="panel screen" id="screen-home"><h2>ホーム</h2><p class="muted">6分間の横視点アクションバトル。2分・4分・6分にボスが出現する。</p><div class="stat"><div>プレイヤーLv.<b id="homeLv">1</b></div><div>所持魔晶 <b id="homeCrystal">0</b></div><div>最高ステージ <b id="homeStage">1</b></div><div>討伐数 <b id="homeKills">0</b></div></div><div class="grid"><div class="card"><h3>現在の編成</h3><p id="homeBuild">剣士 / 小さな精霊</p><p class="small">ステージ開始後は装備を変更できません。</p><button class="primary" data-go="battle">ステージへ</button></div><div class="card"><h3>今日の目標</h3><p>ステージを1回プレイ</p><p class="small">戦闘で魔晶と経験値を獲得しよう。</p><button data-go="missions">ミッションを見る</button></div></div><div class="notice">セーブデータはこのブラウザに自動保存されます。別端末への同期・オンラインランキングは、サーバー接続を設定するまで利用できません。</div></section>
+<section class="panel screen hidden" id="screen-battle"><div class="battle-wrap"><div class="battle-head"><div><h2 id="battleTitle">ステージ 1 - 草原</h2><span class="small">移動：A/D・←/→　攻撃：J　ジャンプ：Space　停止：Esc</span></div><div class="row"><button id="normalStart" class="primary">ノーマル開始</button><button id="hardStart" disabled>ハード（Lv.50）</button><button id="endlessStart">エンドレス</button></div></div><div class="battle-hud"><span>HP <b id="hpText">100/100</b></span><span>MP <b id="mpText">50/50</b></span><span>スタミナ <b id="stText">100/100</b></span><span>Lv.<b id="runLv">1</b></span><span id="timeText">00:00</span><span>討伐 <b id="killText">0</b></span></div><div class="bar"><i id="hpBar"></i></div><canvas id="arena" class="battle-canvas" width="900" height="440"></canvas><div class="mobile-controls"><button data-key="left">◀</button><button data-key="jump">ジャンプ</button><button data-key="attack">攻撃</button><button data-key="right">▶</button></div><div id="battleOverlay" class="overlay hidden"><div class="overlay-box" id="overlayContent"></div></div></div></section>
+<section class="panel screen hidden" id="screen-characters"><h2>キャラクター</h2><p class="small">同じキャラクターでもレアリティごとに基礎能力が異なる。ノーマルには固有能力がない。</p><div id="characterList" class="grid"></div></section>
+<section class="panel screen hidden" id="screen-equipment"><h2>装備</h2><p class="small">頭・胴・脚・足・手・武器の6部位。ステージ中は変更不可。</p><div id="gearSlots" class="grid"></div><h3>所持装備</h3><div id="gearList"></div></section>
+<section class="panel screen hidden" id="screen-pets"><h2>ペット</h2><p class="small">同時に装備できるペットは1体。ペットは直接攻撃せず、補助効果を常時発動する。</p><div id="petList" class="grid"></div></section>
+<section class="panel screen hidden" id="screen-gacha"><h2>ガチャ</h2><div class="notice">通常ガチャ：アイテム50% / ノーマル10% / レア35% / エピック4% / レジェンド1%。<br>S1ガチャ：アイテム50% / ノーマル10% / レア33% / エピック4% / レジェンド2% / S1 1%。</div><div class="grid"><div class="card"><h3>キャラクターガチャ</h3><p>キャラクター・装備・強化素材</p><button data-gacha="character">1回引く（ガチャ石1）</button><p class="small">天井まで <b id="pity-character">100</b>回</p></div><div class="card"><h3>ペットガチャ</h3><p>ペット・装備・強化素材</p><button data-gacha="pet">1回引く（ガチャ石1）</button><p class="small">天井まで <b id="pity-pet">100</b>回</p></div><div class="card"><h3>S1装備ガチャ</h3><p>S1・通常装備・強化素材</p><button data-gacha="s1">1回引く（ガチャ石5）</button><p class="small">天井まで <b id="pity-s1">100</b>回</p></div></div><div id="gachaResult" class="item hidden"></div></section>
+<section class="panel screen hidden" id="screen-shop"><h2>ショップ</h2><p class="small">在庫無制限。商品と価格は後から調整可能。</p><div id="shopList" class="grid"></div></section>
+<section class="panel screen hidden" id="screen-missions"><h2>ミッション</h2><div id="missionList"></div></section>
+<section class="panel screen hidden" id="screen-profile"><h2>プレイヤー記録</h2><div id="profileStats" class="stat"></div><h3>ステージ選択</h3><div id="stageList" class="grid"></div></section>
+<section class="panel screen hidden" id="screen-settings"><h2>設定</h2><div class="card"><h3>プレイヤー名</h3><input id="playerName" class="input" maxlength="16" placeholder="プレイヤー名"><button id="saveName">保存</button></div><div class="card" style="margin-top:10px"><h3>セーブデータ</h3><p class="small">このブラウザ内に自動保存されます。</p><button id="resetSave">セーブデータを初期化</button></div><p class="small">アカウント認証・オンライン保存・ランキングはサーバー連携の実装後に有効化します。</p></section>
+</main></div><div class="footer">SOLO FIGHTER - 新規ゲームデータ / 自動保存</div></div>
 <script>
+"use strict";
 const $=id=>document.getElementById(id);
-const defaultState={crystal:0,totalCrystal:0,playerLv:1,points:0,gems:10,tickets:0,stage:1,cleared:0,character:"剣士",charLevels:{剣士:1,魔法使い:1,弓使い:1},charSpent:{剣士:0,魔法使い:0,弓使い:0},pets:["小さな精霊"],petLevels:{"小さな精霊":1},gear:[{name:"旅人の剣",rarity:"ノーマル",element:"無属性",level:1}],materials:{equipment:0,character:0,pet:0},gachaPity:{character:0,pet:0,s1:0},skills:[],missionsDone:[],highestEndless:0,bestTime:null};
-let state={...defaultState,...JSON.parse(localStorage.getItem("soloFighterSave")||"{}")};
-state.gachaPity={...defaultState.gachaPity,...(state.gachaPity||{})};state.petLevels={...defaultState.petLevels,...(state.petLevels||{})};state.materials={...defaultState.materials,...(state.materials||{})};state.tickets=Number(state.tickets)||0;
-const GACHA_RATES={normal:{item:50,ノーマル:10,レア:35,エピック:4,レジェンド:1},s1:{item:50,ノーマル:10,レア:33,エピック:4,レジェンド:2,S1:1}};
-const CHARACTER_SPEED={剣士:3.8,魔法使い:3.6,弓使い:4.0};
-function save(){localStorage.setItem("soloFighterSave",JSON.stringify(state));renderMeta()}
-function renderMeta(){$("crystal").textContent=state.crystal;$("playerLv").textContent=state.playerLv;$("homeLv").textContent=state.playerLv;$("points").textContent=state.points;$("gems").textContent=state.gems;$("tickets").textContent=state.tickets;$("pityCharacter").textContent=100-(state.gachaPity.character||0);$("pityPet").textContent=100-(state.gachaPity.pet||0);$("pityS1").textContent=100-(state.gachaPity.s1||0);$("hardStartBtn").disabled=state.playerLv<50;$("hardStartBtn").textContent=state.playerLv<50?"ハード開始（プレイヤーLv.50で解放）":"ハードステージ開始";$("stageName").textContent="草原 "+state.stage+" / 20";$("battleStage").textContent="草原 "+state.stage;$("rankCrystal").textContent=state.totalCrystal;$("homeChars").textContent=state.character+" Lv."+state.charLevels[state.character];$("rankEndless").textContent=state.highestEndless||"未挑戦";$("rankTime").textContent=state.bestTime?state.bestTime+"秒":"未記録"}
-function showScreen(name){if(name!=="battle")document.body.classList.remove("battle-mode");document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===name));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===name));if(name==="battle")draw()}
-document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showScreen(b.dataset.go));
-document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{if(b.dataset.action==="unlock"){if(state.crystal<100)return alert("魔晶が足りません");state.crystal-=100;state.points++;state.playerLv++;save()}if(b.dataset.action==="resetChar"){const n=state.character,spent=state.charSpent[n]||0;state.crystal+=Math.floor(spent*.9);state.charSpent[n]=0;state.charLevels[n]=1;save();renderLists();alert("レベルをリセットしました。使用魔晶の90%を返還しました。")}});
-const characters=[{name:"剣士",desc:"近距離の剣攻撃。扱いやすい標準キャラクター。",skill:"斬撃の威力+10%"},{name:"魔法使い",desc:"魔法弾で中距離を攻撃する。",skill:"魔法攻撃の威力+15%"},{name:"弓使い",desc:"素早い遠距離攻撃が得意。",skill:"攻撃速度+10%"}];
-function renderLists(){$("characterList").innerHTML=characters.map(c=>'<div class="card"><h3>'+c.name+(state.character===c.name?' ★':'')+'</h3><p class="small">'+c.desc+'</p><p class="small gold">'+c.skill+'</p><p>Lv.'+state.charLevels[c.name]+'</p><button data-pick="'+c.name+'">選択</button> <button data-level="'+c.name+'">強化（'+(state.charLevels[c.name]*50)+'魔晶）</button></div>').join("");document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{state.character=b.dataset.pick;save();renderLists()});document.querySelectorAll("[data-level]").forEach(b=>b.onclick=()=>{let n=b.dataset.level,cost=state.charLevels[n]*50;if(state.crystal<cost)return alert("魔晶が足りません");state.crystal-=cost;state.charSpent[n]=(state.charSpent[n]||0)+cost;state.charLevels[n]++;save();renderLists()});$("petList").innerHTML=state.pets.map(p=>'<div class="card"><h3>🐾 '+p+'</h3><p>所持効果：獲得経験値 +5%</p></div>').join("");$("gearList").innerHTML=state.gear.map(g=>'<div class="listitem"><span>'+g.name+' <b class="'+(g.rarity==="S1"?"legend":g.rarity==="レジェンド"?"legend":g.rarity==="エピック"?"epic":g.rarity==="レア"?"rare":"normal")+'">'+g.rarity+'</b></span><span>属性：'+g.element+'</span></div>').join("");$("missionList").innerHTML=["ステージを1回クリア","敵を20体倒す","スキルを3回獲得","ボスを1体倒す"].map((m,i)=>'<div class="listitem"><span>'+m+'</span><span class="muted">進行状況はプレイで更新</span></div>').join("")}
-renderMeta();renderLists();
-// Battle engine rebuilt from the agreed combat design.
-const canvas=$("game"),ctx=canvas.getContext("2d");
-const W=960,H=540,FLOOR=432;
-const game={
- active:false,paused:false,ended:false,t:0,last:0,spawnClock:0,victoryTimer:0,bossesDefeated:0,bossSpawned:[false,false,false],
- player:null,enemies:[],projectiles:[],bosses:[],damageTexts:[],skills:[],
- xp:0,xpNeed:8,level:1,kills:0,earnedCrystal:0,earnedXP:0,
- pendingLevels:0,legendUsed:false,keys:{},doubleTap:{},eliteClock:0,
- mode:"normal",resultWin:false,skillQueue:[],commandBuffer:[],hitStop:0,
-};
-const rarityOrder=["ノーマル","レア","エピック","レジェンド"];
-const rarityColors={"ノーマル":"#fff","レア":"#4b9dff","エピック":"#b58cff","レジェンド":"#e6b94f"};
-const skillPool=[
- {id:"maxhp",name:"生命力",rarity:"ノーマル",desc:"最大HP +20",apply:()=>{game.player.maxHP+=20}},
- {id:"maxmp",name:"魔力容量",rarity:"ノーマル",desc:"最大MP +15",apply:()=>{game.player.maxMP+=15}},
- {id:"maxst",name:"体力容量",rarity:"ノーマル",desc:"最大スタミナ +20",apply:()=>{game.player.maxStamina+=20}},
- {id:"attack",name:"攻撃強化",rarity:"ノーマル",desc:"攻撃力 +10%",apply:()=>{game.player.attackPower*=1.1}},
-
- {id:"speed",name:"俊足",rarity:"レア",desc:"移動速度 +8%",apply:()=>{game.player.speed*=1.08}},
- {id:"mpregen",name:"魔力回復",rarity:"レア",desc:"MP自然回復量 +1",apply:()=>{game.player.mpRegen+=1}},
- {id:"stregen",name:"スタミナ回復",rarity:"レア",desc:"スタミナ自然回復量 +1",apply:()=>{game.player.stRegen+=1}},
- {id:"hpregen",name:"生命回復",rarity:"エピック",desc:"HP自然回復量 +1",apply:()=>{game.player.hpRegen+=1}},
- {id:"revive",name:"不屈の魂",rarity:"レジェンド",desc:"HPが0になると1回だけ最大HPで復活。復活後2秒無敵",apply:()=>{game.player.revive=true}}
+const SAVE_KEY="solo-fighter-v2";
+const RARITIES=["ノーマル","レア","エピック","レジェンド","S1"];
+const RARITY_CLASS={"ノーマル":"Normal","レア":"Rare","エピック":"Epic","レジェンド":"Legendary","S1":"S1"};
+const CHARACTERS=[
+ {id:"swordsman",name:"剣士",rarity:"ノーマル",speed:3.8,attack:10,hp:100,ability:"なし"},
+ {id:"mage",name:"魔法使い",rarity:"ノーマル",speed:3.6,attack:9,hp:95,ability:"なし"},
+ {id:"archer",name:"弓使い",rarity:"ノーマル",speed:4.0,attack:9,hp:95,ability:"なし"},
+ {id:"knight",name:"守護騎士",rarity:"レア",speed:3.7,attack:11,hp:115,ability:"最大HP＋10%"},
+ {id:"flame",name:"炎術師",rarity:"エピック",speed:3.6,attack:13,hp:100,ability:"攻撃力＋8%"},
+ {id:"star",name:"星詠み",rarity:"レジェンド",speed:3.9,attack:14,hp:110,ability:"攻撃力＋10%、MP回復＋8%"}
 ];
-function newPlayer(){
- return {x:150,y:FLOOR,vx:0,vy:0,face:1,onGround:true,jumps:0,maxJumps:2,
-  hp:100,maxHP:100,mp:60,maxMP:60,stamina:100,maxStamina:100,
-  attackPower:10,speed:(CHARACTER_SPEED[state.character]||3.8),hpRegen:2,mpRegen:3,stRegen:5,
-  regenClock:0,attackTimer:0,attackCooldown:0,attackDir:1,attackHit:[],attackCombo:0,attackMotion:"slash",attackAir:false,
-  invuln:0,revive:false,revived:false,knockX:0,knockY:0,knockCap:13,
-  dodgeCooldown:0,dodgeTime:0,dodgeDir:1,hitFlash:0};
-}
-game.player=newPlayer();
-function rarityClass(r){return r==="レア"?"rare":r==="エピック"?"epic":r==="レジェンド"?"legend":"normal"}
-function showOverlay(title,txt,choices,close){
- $("overlayTitle").textContent=title;$("overlayText").innerHTML=txt;$("choices").innerHTML=choices||"";
- $("overlayClose").style.display=close?"inline-block":"none";$("overlay").classList.add("show");
-}
-function hideOverlay(){$("overlay").classList.remove("show")}
-function randomRarity(){
- const n=Math.random();
- if(n<0.002)return "レジェンド";
- if(n<0.022)return "エピック";
- if(n<0.17)return "レア";
- return "ノーマル";
-}
-function chooseSkills(bossReward){
- const picks=[];
- if(bossReward){
-  const pool=skillPool.filter(s=>s.rarity!=="ノーマル"&&!(s.rarity==="レジェンド"&&game.legendUsed));
-  while(pool.length&&picks.length<3){const i=Math.floor(Math.random()*pool.length);picks.push(pool.splice(i,1)[0])}
-  return picks;
- }
- for(let i=0;i<3;i++){
-  let rarity=randomRarity();
-  if((game.legendUsed||picks.some(x=>x.rarity==="レジェンド"))&&rarity==="レジェンド")rarity="エピック";
-  let pool=skillPool.filter(s=>s.rarity===rarity);
-  if(!pool.length)pool=skillPool.filter(s=>s.rarity==="ノーマル");
-  picks.push(pool[Math.floor(Math.random()*pool.length)]);
- }
- return picks;
-}
-function openSkillChoice(bossReward){
- game.paused=true;
- const picks=chooseSkills(bossReward);
- const cards=picks.map((s,i)=>'<button class="choice rarity-'+rarityClass(s.rarity)+'" data-skill="'+i+'" style="border-color:'+rarityColors[s.rarity]+'"><b style="color:'+rarityColors[s.rarity]+'">'+s.rarity+'</b><h3>'+s.name+'</h3><p class="small">'+s.desc+'</p></button>').join("");
- showOverlay(bossReward?"ボス撃破報酬":"レベルアップ","3つの候補から1つ選んでください。",cards,false);
- document.querySelectorAll("[data-skill]").forEach(b=>b.onclick=()=>{
-  const s=picks[Number(b.dataset.skill)];s.apply();
-  const found=game.skills.find(x=>x.id===s.id);
-  if(found)found.level++;else game.skills.push({id:s.id,name:s.name,rarity:s.rarity,level:1,desc:s.desc});
-  if(s.rarity==="レジェンド")game.legendUsed=true;
-  hideOverlay();game.paused=false;game.last=performance.now();
-  if(game.pendingLevels>0){game.pendingLevels--;openSkillChoice(false)}
- });
-}
-function gainXP(amount){
- game.earnedXP+=amount;game.xp+=amount;
- while(game.xp>=game.xpNeed){game.xp-=game.xpNeed;game.level++;game.xpNeed=Math.ceil(game.xpNeed*1.42);game.pendingLevels++}
- if(!game.paused&&game.pendingLevels>0){game.pendingLevels--;openSkillChoice(false)}
-}
-function addReward(crystal,xp){
- state.crystal+=crystal;state.totalCrystal+=crystal;game.earnedCrystal+=crystal;gainXP(xp);save();
-}
-function damageText(x,y,value,color){
- game.damageTexts.push({x:x,y:y,text:String(Math.max(1,Math.round(value))),life:.8,color:color||"#f5f1e8"});
-}
-function clampKnock(value,cap){return Math.max(-cap,Math.min(cap,value))}
-function applyKnockback(target,dir,power){
- const k=clampKnock(power,target.knockCap||13);
- target.knockX=clampKnock((target.knockX||0)+dir*k,target.knockCap||13);
- target.knockY=target.onGround?0:clampKnock((target.knockY||0)-Math.min(2,k*.12),target.knockCap||13);
-}
-function takePlayerHit(raw,fromX,power){
- const p=game.player;if(p.invuln>0||game.ended)return;
- let amount=Math.max(1,raw);
- p.hp=Math.max(0,p.hp-amount);p.invuln=.3;p.hitFlash=.3;
- applyKnockback(p,p.x<fromX?-1:1,power||4);damageText(p.x,p.y-55,amount,"#e34e4e");
- if(p.hp<=0&&p.revive&&!p.revived){
-  p.revived=true;p.hp=p.maxHP;p.invuln=2;p.revive=false;
-  damageText(p.x,p.y-75,"復活","#e6b94f");
- }
-}
-function spawnEnemy(){
- const t=game.t,scale=(1+t/180+(state.stage-1)*.25)*(game.mode==="hard"?1.7:1);
- const roll=Math.random(),type=roll<.34?"beast":roll<.60?"goblin":roll<.82?"skeleton":"hover";
- const side=Math.random()<.5?-1:1,x=side<0?-28:W+28;
- const base={beast:28,goblin:34,skeleton:22,hover:26}[type],hp=Math.round(base*scale);
- game.enemies.push({type,x,y:type==="hover"?250:FLOOR,hp,maxHP:hp,damage:5+scale*1.8,speed:1.05+scale*.12,
-  state:"approach",timer:0,face:side<0?1:-1,knockX:0,knockY:0,knockCap:12,
-  attackClock:0,flash:0,elite:0,dead:false,hitThisAttack:false});
-}
-function spawnElite(){
- if(game.t<35)return;
- const tier=game.t<150?1:game.t<280?Math.random()<.7?1:2:Math.random()<.45?1:Math.random()<.8?2:3;
- const type=["beast","goblin","skeleton","hover"][Math.floor(Math.random()*4)];
- const side=Math.random()<.5?-1:1,base={beast:28,goblin:34,skeleton:22,hover:26}[type];
- const hp=Math.round(base*(1+game.t/180)*[1,2,3,5][tier]);
- game.enemies.push({type,x:side<0?-28:W+28,y:type==="hover"?250:FLOOR,hp,maxHP:hp,damage:(5+game.t/90)*[1,1.35,1.8,2.4][tier],
-  speed:1.2+game.t/500,state:"approach",timer:0,face:side<0?1:-1,knockX:0,knockY:0,knockCap:12,
-  attackClock:0,flash:0,elite:tier,dead:false,hitThisAttack:false});
-}
-function spawnBoss(index){
- const names=["古代の守護者","紅蓮の獣王","深淵の巨人"];
- const hp=([360,560,850][index]+game.t*1.1)*(game.mode==="hard"?1.7:1);
- game.bosses.push({index,name:names[index],x:W+20,y:FLOOR-20,w:90+index*8,h:95+index*10,
-  hp:hp,maxHP:hp,damage:14+index*5,speed:1.1+index*.12,state:"approach",timer:0,
-  attackClock:1.2,phase:1,knockX:0,knockY:0,knockCap:4,dead:false});
-}
-function attack(){
- const p=game.player;if(!game.active||game.paused||p.attackCooldown>0||p.attackTimer>0)return;
- const motions=["slash","rising","falling"];
- p.attackMotion=motions[p.attackCombo%motions.length];p.attackCombo++;
- p.attackTimer=p.onGround?.24:.20;p.attackCooldown=.42;p.attackDir=p.face;p.attackHit=[];p.attackAir=!p.onGround;
- const reach=64,damage=p.attackPower;
- let hitCount=0;
- game.enemies.forEach(e=>{
-  if(!e.dead&&Math.abs(e.x-p.x)<=reach&&Math.abs(e.y-p.y)<=105&&(e.x-p.x)*p.attackDir>=-12){
-   e.hp-=damage;e.flash=.12;p.attackHit.push(e);hitCount++;
-   const dir=e.x>=p.x?1:-1;applyKnockback(e,dir,Math.min(10,2+damage*.16));
-   damageText(e.x,e.y-38,damage,"#fff4c7");
-  }
- });
- game.bosses.forEach(b=>{
-  if(!b.dead&&Math.abs(b.x-p.x)<reach+35&&Math.abs(b.y-p.y)<115&&(b.x-p.x)*p.attackDir>=-18){
-   b.hp-=damage;b.flash=.12;applyKnockback(b,b.x>=p.x?1:-1,Math.min(3,damage*.025));
-   damageText(b.x,b.y-65,damage,"#fff4c7");hitCount++;
-  }
- });
- if(hitCount>0)game.hitStop=Math.max(game.hitStop,.035);
-}
-function jump(){
- const p=game.player;if(!game.active||game.paused)return;
- p.maxJumps=Math.max(2,Math.floor(p.maxStamina/50));
- if(p.jumps>=p.maxJumps||p.stamina<18)return;
- p.stamina-=18;p.vy=p.jumps===0?-11.5:-10.5;p.jumps++;p.onGround=false;
-}
-function spawnProjectile(x,y,vx,vy,damage,kind){
- game.projectiles.push({x,y,vx,vy,gravity:.18,damage,life:3,kind});
-}
-function updateEnemy(e,dt,p){
- if(e.dead)return;
- if(e.x<0){e.x+=e.speed;return}if(e.x>W){e.x-=e.speed;return}
- e.flash=Math.max(0,e.flash-dt);e.attackClock=Math.max(0,e.attackClock-dt);
- const dx=p.x-e.x,dist=Math.abs(dx),dir=Math.sign(dx)||-1;
- if(Math.abs(e.knockX)>0.1)e.x+=e.knockX;
- e.knockX*=Math.pow(.08,dt);
- if(e.type==="hover"&&e.state!=="charge")e.y=250+Math.sin(game.t*3+e.x*.02)*10;
- if(e.type==="beast"){
-  if(dist>28)e.x+=dir*e.speed;
-  if(dist<34&&e.attackClock<=0){takePlayerHit(e.damage,e.x,3);e.attackClock=.8}
- }else if(e.type==="goblin"){
-  if(e.state==="approach"){if(dist>145)e.x+=dir*e.speed;else{e.state="windup";e.timer=.7;e.face=dir}}
-  else if(e.state==="windup"){e.timer-=dt;if(e.timer<=0){e.state="charge";e.timer=.38}}
-  else if(e.state==="charge"){e.x+=e.face*e.speed*5.5;e.timer-=dt;if(Math.abs(e.x-p.x)<38&&Math.abs(e.y-p.y)<70&&e.attackClock<=0){takePlayerHit(e.damage*1.3,e.x,5);e.attackClock=.7}if(e.timer<=0){e.state="recover";e.timer=.55}}
-  else{e.timer-=dt;if(e.timer<=0)e.state="approach"}
- }else if(e.type==="skeleton"){
-  if(dist<230)e.x-=dir*e.speed*.45;else if(dist>330)e.x+=dir*e.speed*.35;
-  if(e.state==="approach"&&dist<390){e.state="aim";e.timer=.9}
-  else if(e.state==="aim"){e.timer-=dt;if(e.timer<=0){spawnProjectile(e.x,e.y-22,dir*5.2,-5.5,e.damage,"arrow");e.state="recover";e.timer=1.1}}
-  else if(e.state==="recover"){e.timer-=dt;if(e.timer<=0)e.state="approach"}
- }else{
-  if(e.state==="approach"){if(dist>155)e.x+=dir*e.speed;else{e.state="windup";e.timer=.65;e.face=dir}}
-  else if(e.state==="windup"){e.timer-=dt;if(e.timer<=0){e.state="charge";e.timer=.45}}
-  else if(e.state==="charge"){e.x+=e.face*e.speed*6;e.y+=(FLOOR-e.y)*.12;e.timer-=dt;if(Math.abs(e.x-p.x)<40&&Math.abs(e.y-p.y)<55&&e.attackClock<=0){takePlayerHit(e.damage,e.x,5);e.attackClock=.8}if(e.timer<=0){e.state="recover";e.timer=.7}}
-  else{e.timer-=dt;if(e.timer<=0)e.state="approach"}
- }
- if(e.x<0)e.x=0;if(e.x>W)e.x=W;
-}
-function updateBoss(b,dt,p){
- if(b.dead)return;b.flash=Math.max(0,(b.flash||0)-dt);
- if(b.hp<=0){b.dead=true;game.kills++;game.bossesDefeated++;addReward(100+50*b.index,8+4*b.index);game.skillQueue.push("boss");if(b.index===2)game.victoryTimer=1.5;return}
- if(b.hp<b.maxHP*.5)b.phase=2;
- const dir=Math.sign(p.x-b.x)||-1,dist=Math.abs(p.x-b.x);
- if(Math.abs(b.knockX)>0.1)b.x+=b.knockX;b.knockX*=Math.pow(.08,dt);
- if(b.state==="approach"){if(dist>115)b.x+=dir*b.speed;else{b.state="windup";b.timer=b.phase===1?.8:.55}}
- else if(b.state==="windup"){b.timer-=dt;if(b.timer<=0){b.state="charge";b.timer=.5;b.face=dir}}
- else if(b.state==="charge"){
-  b.x+=b.face*(b.speed*(b.phase===1?4.2:5.4));b.timer-=dt;
-  if(Math.abs(b.x-p.x)<55&&b.attackClock<=0){takePlayerHit(b.damage,b.x,7);b.attackClock=.8}
-  if(b.timer<=0){b.state="recover";b.timer=.9}
- }else{b.timer-=dt;if(b.timer<=0){b.state="approach";b.attackClock=1.4}}
- if(b.index===1&&b.state==="windup"&&b.timer<.25&&b.attackClock<=0){spawnProjectile(b.x,b.y-65,-dir*4,-2,b.damage,"ember");b.attackClock=1.1}
- b.x=Math.max(30,Math.min(W-30,b.x));
-}
-function resolveBodies(){
- const p=game.player;
- for(let i=0;i<game.enemies.length;i++){
-  const a=game.enemies[i];
-  for(let j=i+1;j<game.enemies.length;j++){
-   const b=game.enemies[j];
-   if(Math.abs(a.x-b.x)<30&&Math.abs(a.y-b.y)<42){a.x-=Math.sign(a.x-b.x||1)*.5;b.x+=Math.sign(a.x-b.x||1)*.5}
-  }
-  if(Math.abs(a.x-p.x)<28&&Math.abs(a.y-p.y)<52){
-   if(a.type==="beast"&&a.attackClock<=0){takePlayerHit(a.damage,a.x,3);a.attackClock=.8}
-   if(a.type!=="beast"&&a.state!=="charge")a.x+=a.x<p.x?-1:1;
-  }
- }
-}
-function update(dt){
- if(!game.active||game.paused||game.ended)return;
- const p=game.player;game.t+=dt;
- p.attackTimer=Math.max(0,p.attackTimer-dt);p.attackCooldown=Math.max(0,p.attackCooldown-dt);
- p.invuln=Math.max(0,p.invuln-dt);p.hitFlash=Math.max(0,p.hitFlash-dt);
- p.vx=(game.keys.right?1:0)-(game.keys.left?1:0);
- if(p.vx)p.face=Math.sign(p.vx);
- p.x+=p.vx*p.speed+(p.knockX||0);
- p.knockX=(p.knockX||0)*Math.pow(.08,dt);
- p.vy+=.55;p.y+=p.vy+(p.knockY||0);p.knockY=(p.knockY||0)*Math.pow(.08,dt);
- if(p.y>=FLOOR){p.y=FLOOR;p.vy=0;p.onGround=true;p.jumps=0;if(p.attackAir){p.attackTimer=0;p.attackAir=false}}else p.onGround=false;
- p.x=Math.max(18,Math.min(W-18,p.x));
- p.regenClock+=dt;if(p.regenClock>=1){p.regenClock-=1;p.hp=Math.min(p.maxHP,p.hp+p.hpRegen);p.mp=Math.min(p.maxMP,p.mp+p.mpRegen);p.stamina=Math.min(p.maxStamina,p.stamina+p.stRegen)}
- if(game.t>=5){
-  game.spawnClock+=dt;
-  if(game.spawnClock>=Math.max(.55,1.65-game.t/520)){game.spawnClock=0;spawnEnemy()}
-  game.eliteClock+=dt;if(game.eliteClock>55){game.eliteClock=0;if(Math.random()<.55)spawnElite()}
- }
- [120,240,360].forEach((at,i)=>{if(game.t>=at&&!game.bossSpawned[i]){game.bossSpawned[i]=true;spawnBoss(i)}});
- game.enemies.forEach(e=>updateEnemy(e,dt,p));
- game.bosses.forEach(b=>updateBoss(b,dt,p));
- game.projectiles=game.projectiles.filter(b=>{
-  b.x+=b.vx;b.y+=b.vy;b.vy+=b.gravity;b.life-=dt;
-  if(Math.abs(b.x-p.x)<19&&Math.abs(b.y-(p.y-25))<25){takePlayerHit(b.damage,b.x,3);return false}
-  return b.life>0&&b.x>-30&&b.x<W+30&&b.y<H+30;
- });
- resolveBodies();
- game.enemies=game.enemies.filter(e=>{
-  if(e.hp<=0&&!e.dead){e.dead=true;e.deathTimer=.35;game.kills++;const mult=e.elite?[1,2,3,5][e.elite]:1;const reward=(4+Math.floor(game.t/50))*mult;addReward(reward,mult);damageText(e.x,e.y-30,"魔晶 +"+reward,"#e2bd52")}
-  if(e.dead){e.deathTimer-=dt;return e.deathTimer>0}
-  return true;
- });
- game.bosses=game.bosses.filter(b=>!b.dead);
- game.damageTexts=game.damageTexts.filter(d=>{d.y-=.7;d.life-=dt;return d.life>0});
- if(game.skillQueue.length&&!game.paused){const q=game.skillQueue.shift();openSkillChoice(q==="boss")}
- if(p.hp<=0){finish(false,"HPが0になった");return}
- if(game.victoryTimer>0){game.victoryTimer-=dt;if(game.victoryTimer<=0){finish(true,"最後のボスを撃破！");return}}
- if(game.t>=420&&game.bossesDefeated<3){finish(false,"制限時間内に最後のボスを倒せなかった");return}
- updateHUD();
-}
-function updateHUD(){
- const p=game.player;
- $("clock").textContent=fmt(game.t);$("runLv").textContent=game.level;
- $("hpbar").style.width=(p.hp/p.maxHP*100)+"%";$("hptext").textContent=Math.ceil(p.hp)+"/"+p.maxHP;
- if($("mpbar")){$("mpbar").style.width=(p.mp/p.maxMP*100)+"%";$("mptext").textContent=Math.ceil(p.mp)+"/"+p.maxMP}
- if($("stbar")){$("stbar").style.width=(p.stamina/p.maxStamina*100)+"%";$("sttext").textContent=Math.ceil(p.stamina)+"/"+p.maxStamina}
- $("xptext").textContent=game.xp+"/"+game.xpNeed;$("xpbar").style.width=(game.xp/game.xpNeed*100)+"%";
- const boss=game.bosses[0],wrap=$("bossHud");
- if(wrap){wrap.style.display=boss?"flex":"none";if(boss){$("bossName").textContent=boss.name;$("bossbar").style.width=(boss.hp/boss.maxHP*100)+"%";$("bossbar").style.background=boss.hp/boss.maxHP>.5?"#65a96b":boss.hp/boss.maxHP>.25?"#d6ad45":"#cf5555"}}
-}
-function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
-function draw(){
- ctx.clearRect(0,0,W,H);ctx.fillStyle="#a9c69a";ctx.fillRect(0,0,W,FLOOR);
- ctx.fillStyle="#91b784";for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(i*145+35,390,75,Math.PI,0);ctx.fill()}
- ctx.fillStyle="#c4a77e";ctx.fillRect(0,FLOOR,W,H-FLOOR);ctx.fillStyle="#e0c99f";ctx.fillRect(0,FLOOR-4,W,7);
- for(let i=0;i<16;i++){ctx.fillStyle="#b79a72";ctx.fillRect(i*65+12,FLOOR+25,35,3)}
- const p=game.player;
- function actor(x,y,color,face,scale){
-  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
-  ctx.fillStyle="#0002";ctx.beginPath();ctx.ellipse(0,3,20,6,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=color;ctx.strokeStyle="#302d29";ctx.lineWidth=3;ctx.fillRect(-15,-39,30,35);ctx.strokeRect(-15,-39,30,35);
-  ctx.fillStyle="#f1d2ad";ctx.beginPath();ctx.arc(0,-47,13,0,Math.PI*2);ctx.fill();ctx.stroke();
-  ctx.fillStyle="#fff";ctx.fillRect(face>0?2:-10,-51,7,8);ctx.fillStyle="#252525";ctx.fillRect(face>0?5:-7,-49,3,4);
-  ctx.restore();
- }
- if(!(p.invuln>0&&Math.floor(game.t*22)%2===0))actor(p.x,p.y,"#6685a8",p.face,1);
- if(p.attackTimer>0){
-  ctx.save();ctx.globalAlpha=.22;ctx.strokeStyle="#fff0b5";ctx.lineWidth=5;ctx.lineCap="round";
-  ctx.beginPath();
-  const cx=p.x+p.attackDir*25,cy=p.y-38;
-  if(p.attackMotion==="rising"){ctx.moveTo(cx-p.attackDir*24,cy+23);ctx.quadraticCurveTo(cx+p.attackDir*35,cy-10,cx+p.attackDir*26,cy-45)}
-  else if(p.attackMotion==="falling"){ctx.moveTo(cx-p.attackDir*22,cy-43);ctx.quadraticCurveTo(cx+p.attackDir*36,cy-8,cx+p.attackDir*25,cy+25)}
-  else{ctx.moveTo(cx-p.attackDir*20,cy-28);ctx.quadraticCurveTo(cx+p.attackDir*42,cy,cx+p.attackDir*22,cy+22)}
-  ctx.stroke();ctx.restore();
- }
- game.enemies.forEach(e=>{
-  const color=e.flash>0?"#fff":e.type==="goblin"?"#879d65":e.type==="skeleton"?"#ddd8c9":e.type==="hover"?"#a99bc6":"#b78b67";
-  if(e.elite){ctx.strokeStyle=["","#d8d8d8","#e5a33c","#d94d5b"][e.elite];ctx.lineWidth=4+e.elite;ctx.beginPath();ctx.arc(e.x,e.y-35,27+e.elite*5,0,Math.PI*2);ctx.stroke()}
-  if(e.state==="windup"||e.state==="charge"||e.state==="aim"){ctx.fillStyle="#d94b4b55";ctx.beginPath();ctx.ellipse(e.x+(e.face||1)*30,e.y-25,38,22,0,0,Math.PI*2);ctx.fill()}
-  actor(e.x,e.y,color,e.face||1,e.type==="hover"?.8:1);
- });
- game.bosses.forEach(b=>{
-  ctx.save();ctx.translate(b.x,b.y);ctx.fillStyle="#0002";ctx.beginPath();ctx.ellipse(0,5,b.w*.48,9,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=b.flash>0?"#fff":b.index===0?"#7b8d80":b.index===1?"#bd6952":"#756b8e";
-  ctx.strokeStyle="#292929";ctx.lineWidth=5;ctx.fillRect(-b.w/2,-b.h,b.w,b.h);ctx.strokeRect(-b.w/2,-b.h,b.w,b.h);
-  ctx.fillStyle="#f6e6cb";ctx.fillRect(-b.w*.28,-b.h*.72,18,17);ctx.fillRect(b.w*.08,-b.h*.72,18,17);ctx.fillStyle="#222";ctx.fillRect(-b.w*.22,-b.h*.68,7,10);ctx.fillRect(b.w*.14,-b.h*.68,7,10);ctx.restore();
- });
- game.projectiles.forEach(b=>{ctx.fillStyle=b.kind==="arrow"?"#8d6a45":"#d65d4c";ctx.beginPath();ctx.arc(b.x,b.y,7,0,Math.PI*2);ctx.fill()});
- game.damageTexts.forEach(d=>{ctx.globalAlpha=Math.max(0,d.life/.8);ctx.fillStyle=d.color;ctx.font="bold 16px sans-serif";ctx.textAlign="center";ctx.fillText(d.text,d.x,d.y);ctx.globalAlpha=1});
- ctx.textAlign="left";
- if(!game.active){ctx.fillStyle="#172333aa";ctx.fillRect(0,210,W,90);ctx.fillStyle="#fff";ctx.font="bold 26px sans-serif";ctx.textAlign="center";ctx.fillText("ステージ開始を押してください",W/2,265);ctx.textAlign="left"}
-}
-function loop(now){
- if(!game.active)return;const dt=Math.min(.04,(now-game.last)/1000||0);game.last=now;
- if(!game.paused){if(game.hitStop>0)game.hitStop=Math.max(0,game.hitStop-dt);else update(dt)}draw();if(game.active)requestAnimationFrame(loop);
-}
-function startGame(mode){
- game.mode=mode||"normal";document.body.classList.add("battle-mode");
- game.active=true;game.paused=false;game.ended=false;game.t=0;game.last=performance.now();game.spawnClock=0;
- game.player=newPlayer();game.enemies=[];game.projectiles=[];game.bosses=[];game.damageTexts=[];game.skills=[];
- game.xp=0;game.xpNeed=8;game.level=1;game.kills=0;game.earnedCrystal=0;game.earnedXP=0;
- game.pendingLevels=0;game.legendUsed=false;game.skillQueue=[];game.hitStop=0;game.bossesDefeated=0;game.bossSpawned=[false,false,false];game.victoryTimer=0;game.eliteClock=0;game.keys={};game.doubleTap={};
- hideOverlay();showScreen("battle");updateHUD();draw();requestAnimationFrame(loop);
-}
-function finish(win,message){
- if(game.ended)return;game.active=false;game.ended=true;game.resultWin=win;
- if(win){state.cleared=Math.max(state.cleared,state.stage);state.stage=Math.min(20,Math.max(state.stage,state.cleared+1));state.missionsDone.push("clear")}
- save();
- const title=win?"STAGE CLEAR":"GAME OVER";
- const details=message+"<br>経過時間："+fmt(game.t)+"<br>討伐数："+game.kills+"<br>獲得魔晶："+game.earnedCrystal+"<br>獲得経験値："+game.earnedXP+"<br>到達レベル："+game.level;
- showOverlay(title,details,'<button class="choice" id="resultRetry">再挑戦</button><button class="choice" id="resultHome">タイトルへ戻る</button>',false);
- $("choices").querySelector("#resultHome").onclick=()=>{hideOverlay();document.body.classList.remove("battle-mode");showScreen("home")};
- $("choices").querySelector("#resultRetry").onclick=()=>startGame();
-}
-function pauseGame(){
- if(!game.active||game.ended)return;game.paused=true;
- const p=game.player;
- const stats="最大HP "+p.maxHP+" / 最大MP "+p.maxMP+" / 最大スタミナ "+p.maxStamina+
-  " / 攻撃力 "+Math.round(p.attackPower)+" / 移動速度 "+p.speed+
-  "<br>討伐数："+game.kills+"　経過時間："+fmt(game.t);
- const skills=game.skills.length?game.skills.map(s=>s.name+" Lv."+s.level).join("、"):"なし";
- showOverlay("一時停止",stats+"<br>取得スキル："+skills,
-  '<button class="choice" id="resumeCmd">戦闘に戻る</button><button class="choice" id="skillListCmd">スキル詳細</button><button class="choice" id="quitCmd">タイトルへ戻る</button>',false);
-}
-$("startBtn").onclick=()=>startGame("normal");$("hardStartBtn").onclick=()=>{if(state.playerLv<50)return alert("ハードモードはプレイヤーLv.50で解放されます");startGame("hard")};
-$("pauseBtn").onclick=pauseGame;
-$("cmdBtn").onclick=pauseGame;
-$("choices").addEventListener("click",e=>{
- const id=e.target.id||e.target.closest("button")?.id;
- if(id==="resumeCmd"){hideOverlay();game.paused=false;game.last=performance.now()}
- if(id==="skillListCmd"){
-  const list=game.skills.length?game.skills.map(s=>s.name+" Lv."+s.level+"（"+s.desc+"）").join("<br>"):"取得スキルはありません";
-  showOverlay("取得スキル一覧",list,'<button class="choice" id="resumeCmd">戻る</button>',false);
- }
- if(id==="quitCmd")showOverlay("確認","本当に終了しますか？",'<button class="choice" id="confirmQuit">終了する</button><button class="choice" id="resumeCmd">戻る</button>',false);
- if(id==="confirmQuit")finish(false,"途中で終了しました");
+const PETS=[
+ {id:"spirit",name:"小さな精霊",rarity:"ノーマル",effect:"最大HP＋5%",kind:"hp",value:5},
+ {id:"moon",name:"月うさぎ",rarity:"レア",effect:"スタミナ＋7%",kind:"stamina",value:7},
+ {id:"wind",name:"風の精霊",rarity:"エピック",effect:"攻撃力＋8%",kind:"attack",value:8},
+ {id:"phoenix",name:"火の鳥",rarity:"レジェンド",effect:"HP回復速度＋10%",kind:"regen",value:10}
+];
+const GEAR_DATA=[
+ ["木の剣","武器","ノーマル","無属性",10],["旅人の帽子","頭","ノーマル","無属性",2],["革の服","胴","ノーマル","無属性",5],["旅人のズボン","脚","ノーマル","無属性",3],["革の靴","足","ノーマル","無属性",2],["革の手袋","手","ノーマル","無属性",2],
+ ["風切りの剣","武器","レア","風",16],["蒼月の剣","武器","エピック","水",23],["紅蓮の剣","武器","レジェンド","火",32],["星喰いの剣","武器","S1","闇",45]
+];
+const SHOP=[
+ {id:"ticket",name:"ガチャチケット",price:500,desc:"ガチャを1回引ける"},
+ {id:"equipmat",name:"装備強化素材 ×5",price:100,desc:"装備の強化に使用"},
+ {id:"charmat",name:"キャラクター強化素材 ×2",price:300,desc:"キャラクターの育成に使用"},
+ {id:"petmat",name:"ペット強化素材 ×2",price:300,desc:"ペットの育成に使用"},
+ {id:"gems",name:"ガチャ石 ×1",price:250,desc:"通常ガチャ用"}
+];
+const defaultState=()=>({
+ name:"冒険者",crystal:1000,gems:10,tickets:0,playerLv:1,playerXP:0,playerXPNeed:100,
+ stage:1,cleared:0,highestStage:1,totalKills:0,totalRuns:0,totalWins:0,totalCrystal:0,
+ character:"swordsman",characterCopies:[{id:"swordsman",rarity:"ノーマル",level:1,maxLevel:100}],
+ pets:[{id:"spirit",rarity:"ノーマル",level:1,maxLevel:100}],equippedPet:"spirit",
+ gear:GEAR_DATA.slice(0,6).map((g,i)=>({id:"starter-"+i,name:g[0],slot:g[1],rarity:g[2],element:g[3],power:g[4],level:1,locked:false})),
+ equipped:{頭:"starter-1",胴:"starter-2",脚:"starter-3",足:"starter-4",手:"starter-5",武器:"starter-0"},
+ materials:{equipment:0,character:0,pet:0},gachaPity:{character:0,pet:0,s1:0},
+ missions:{run:false,kills:false,clear:false},settings:{sound:true}
 });
-$("overlayClose").onclick=()=>{hideOverlay();game.paused=false;game.last=performance.now()};
-function keyDown(e){
- const code=e.code;
- if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Space"].includes(code))e.preventDefault();
- if(code==="Escape"){if(game.active&&!game.paused)pauseGame();else if(game.paused){hideOverlay();game.paused=false;game.last=performance.now()}return}
- if(code==="ArrowLeft"||code==="KeyA")game.keys.left=true;
- if(code==="ArrowRight"||code==="KeyD")game.keys.right=true
- if((code==="Space"||code==="ArrowUp"||code==="KeyW")&&!e.repeat)jump();
- if(code==="KeyJ"&&!e.repeat)attack();
-}
-function keyUp(e){if(e.code==="ArrowLeft"||e.code==="KeyA")game.keys.left=false;if(e.code==="ArrowRight"||e.code==="KeyD")game.keys.right=false}
-window.addEventListener("keydown",keyDown);window.addEventListener("keyup",keyUp);
-function hold(id,key){const b=$(id);if(!b)return;b.onpointerdown=e=>{e.preventDefault();if(key==="attack")attack();else if(key==="jump")jump();else{game.keys[key]=true}};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{if(key==="left"||key==="right")game.keys[key]=false}}
-hold("leftBtn","left");hold("rightBtn","right");hold("attackBtn","attack");hold("jumpBtn","jump");
-function weightedRarity(type,pityCount){
- const table=type==="s1"?GACHA_RATES.s1:GACHA_RATES.normal;
- if(pityCount>=100){
-  const top=type==="s1"?["エピック","レジェンド","S1"]:["エピック","レジェンド"];
-  return top[Math.floor(Math.random()*top.length)];
- }
- let n=Math.random()*100;
- for(const [rarity,weight] of Object.entries(table)){n-=weight;if(n<0)return rarity}
- return "レア";
-}
-function grantGachaItem(){
- const items=[
-  {name:"装備強化素材",kind:"equipment",amount:1,weight:35},
-  {name:"キャラクター強化素材",kind:"character",amount:1,weight:25},
-  {name:"ペット強化素材",kind:"pet",amount:1,weight:25},
-  {name:"魔晶",kind:"crystal",amount:40,weight:14},
-  {name:"ガチャチケット",kind:"ticket",amount:1,weight:1}
- ];
- let roll=Math.random()*100,item=items[0];for(const candidate of items){roll-=candidate.weight;if(roll<0){item=candidate;break}}
- if(item.kind==="crystal"){state.crystal+=item.amount;state.totalCrystal+=item.amount}
- else if(item.kind==="ticket")state.tickets+=item.amount;
- else state.materials[item.kind]=(state.materials[item.kind]||0)+item.amount;
- return item.name+(item.amount>1?" ×"+item.amount:"");
-}
-function grantRarityReward(type,rarity){
- const names={character:["剣士","魔法使い","弓使い"],pet:["小さな精霊","月うさぎ","風の精霊"]};
- if(type==="s1"){
-  const name=rarity==="S1"?"星喰いの剣":rarity==="レジェンド"?"星守りの鎧":rarity==="エピック"?"星紋の靴":"守護の盾";
-  state.gear.push({name,rarity,element:"無属性",level:1});
-  return rarity+"装備："+name;
- }
- if(Math.random()<.35){
-  const name=rarity==="ノーマル"?"旅人の剣":rarity==="レア"?"風切りの剣":rarity==="エピック"?"蒼月の剣":"紅蓮の剣";
-  state.gear.push({name,rarity,element:"無属性",level:1});
-  return rarity+"装備："+name;
- }
- if(type==="pet"){
-  const base=names.pet[Math.floor(Math.random()*names.pet.length)],name=base+"（"+rarity+"）";
-  state.pets.push(name);state.petLevels[name]=1;
-  return rarity+"ペット："+name;
- }
- const base=names.character[Math.floor(Math.random()*names.character.length)],key=base+"（"+rarity+"）";
- state.charLevels[key]=state.charLevels[key]||1;state.charSpent[key]=0;
- return rarity+"キャラクター："+key;
-}
-document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>{
- const type=b.dataset.gacha,cost=type==="s1"?5:1;
- if(state.gems<cost)return alert("ガチャ石が足りません");
- state.gems-=cost;
- const pity=(state.gachaPity[type]||0)+1;
- const rarity=weightedRarity(type,pity);
- const result=rarity==="item"?grantGachaItem():grantRarityReward(type,rarity);
- state.gachaPity[type]=pity>=100?0:pity;
- $("gachaResult").style.display="block";
- $("gachaResult").textContent="獲得："+result+(pity>=100?"（100回天井・エピック以上確定）":"");
- save();renderLists();
+let state;
+try{state=JSON.parse(localStorage.getItem(SAVE_KEY))||defaultState()}catch(e){state=defaultState()}
+function save(){localStorage.setItem(SAVE_KEY,JSON.stringify(state));renderTop()}
+function charData(){return CHARACTERS.find(c=>c.id===state.character)||CHARACTERS[0]}
+function petData(){return PETS.find(p=>p.id===state.equippedPet)||PETS[0]}
+function rarityWeight(type){return type==="s1"?{item:50,ノーマル:10,レア:33,エピック:4,レジェンド:2,S1:1}:{item:50,ノーマル:10,レア:35,エピック:4,レジェンド:1}}
+function rollRarity(type){let pity=state.gachaPity[type]+1;if(pity>=100){state.gachaPity[type]=0;let arr=type==="s1"?["エピック","レジェンド","S1"]:["エピック","レジェンド"];return {rarity:arr[Math.floor(Math.random()*arr.length)],pity:true}}state.gachaPity[type]=pity;let r=Math.random()*100;for(const [k,v] of Object.entries(rarityWeight(type))){r-=v;if(r<0)return {rarity:k,pity:false}}return {rarity:"レア",pity:false}}
+function addGear(name,slot,rarity,element,power){const id="g"+Date.now()+Math.random().toString(16).slice(2,6);state.gear.push({id,name,slot,rarity,element,power,level:1,locked:false});return name}
+function gacha(type){const cost=type==="s1"?5:1;if(state.gems<cost){alert("ガチャ石が足りません");return}state.gems-=cost;const result=rollRarity(type);let message="";
+ if(result.rarity==="item"){const items=[["装備強化素材",35],["キャラクター強化素材",25],["ペット強化素材",25],["魔晶40",14],["ガチャチケット",1]];let n=Math.random()*100;let chosen=items[0];for(const x of items){n-=x[1];if(n<0){chosen=x;break}}if(chosen[0]==="装備強化素材")state.materials.equipment+=1;else if(chosen[0]==="キャラクター強化素材")state.materials.character+=1;else if(chosen[0]==="ペット強化素材")state.materials.pet+=1;else if(chosen[0]==="魔晶40")state.crystal+=40;else state.tickets+=1;message=chosen[0]}
+ else if(type==="s1"){let name=result.rarity==="S1"?"星喰いの剣":result.rarity==="レジェンド"?"星守りの鎧":result.rarity==="エピック"?"星紋の靴":"守護の盾";addGear(name,"武器",result.rarity,"闇",20);message=result.rarity+"装備："+name}
+ else if(type==="character"){let c=CHARACTERS.find(x=>x.rarity===result.rarity)||CHARACTERS[0];state.characterCopies.push({id:c.id,rarity:result.rarity,level:1,maxLevel:100});message=result.rarity+"キャラクター："+c.name}
+ else{let p=PETS.find(x=>x.rarity===result.rarity)||PETS[0];state.pets.push({id:p.id,rarity:result.rarity,level:1,maxLevel:100});message=result.rarity+"ペット："+p.name}
+ $("gachaResult").classList.remove("hidden");$("gachaResult").innerHTML="<b>獲得：</b>"+message+(result.pity?" <b class='gold'>100回天井！</b>":"");save();renderAll()}
+function showScreen(name){document.querySelectorAll(".screen").forEach(x=>x.classList.add("hidden"));$("screen-"+name).classList.remove("hidden");document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===name));if(name==="battle")renderStages()}
+function renderTop(){$("playerLv").textContent=state.playerLv;$("crystal").textContent=state.crystal;$("gems").textContent=state.gems;$("tickets").textContent=state.tickets;$("homeLv").textContent=state.playerLv;$("homeCrystal").textContent=state.crystal;$("homeStage").textContent=state.cleared+1;$("homeKills").textContent=state.totalKills;$("homeBuild").textContent=charData().name+" / "+petData().name;$("hardStart").disabled=state.playerLv<50;$("playerName").value=state.name}
+function renderCharacters(){$("characterList").innerHTML=state.characterCopies.map((c,i)=>{let d=CHARACTERS.find(x=>x.id===c.id)||CHARACTERS[0];return "<div class='card'><h3 class='rarity-"+(RARITY_CLASS[c.rarity]||"Normal")+"'>"+d.name+"（"+c.rarity+"）</h3><p>Lv."+c.level+" / "+c.maxLevel+"</p><p>攻撃 "+d.attack+"・HP "+d.hp+"・速度 "+d.speed+"</p><p class='small'>"+(c.rarity==="ノーマル"?"固有能力なし":d.ability)+"</p><button data-usechar='"+i+"'>使用する</button><button data-charup='"+i+"'>強化（素材1）</button></div>"}).join("")}
+function renderGear(){$("gearSlots").innerHTML=["頭","胴","脚","足","手","武器"].map(slot=>{let g=state.gear.find(x=>x.id===state.equipped[slot]);return "<div class='card'><b>"+slot+"</b><p>"+(g?g.name+"（"+g.rarity+"） Lv."+g.level:"未装備")+"</p></div>"}).join("");$("gearList").innerHTML=state.gear.map(g=>"<div class='item row between'><span>"+g.name+" <b class='rarity-"+(RARITY_CLASS[g.rarity]||"Normal")+"'>"+g.rarity+"</b> Lv."+g.level+" / "+g.element+"</span><span><button data-equip='"+g.id+"'>装備</button> <button data-upgear='"+g.id+"'>強化</button> <button data-lock='"+g.id+"'>"+(g.locked?"解除":"ロック")+"</button> <button data-discard='"+g.id+"'>捨てる</button></span></div>").join("")}
+function renderPets(){$("petList").innerHTML=state.pets.map((p,i)=>{let d=PETS.find(x=>x.id===p.id)||PETS[0];return "<div class='card'><h3>"+d.name+"（"+p.rarity+"）</h3><p>Lv."+p.level+" / "+p.maxLevel+"</p><p>"+d.effect+"</p><button data-usepet='"+i+"'>装備する</button><button data-petup='"+i+"'>強化（素材1）</button></div>"}).join("")}
+function renderShop(){$("shopList").innerHTML=SHOP.map(x=>"<div class='card'><h3>"+x.name+"</h3><p class='small'>"+x.desc+"</p><p class='gold'>"+x.price+" 魔晶</p><button data-buy='"+x.id+"'>購入</button></div>").join("")}
+function renderMissions(){$("missionList").innerHTML=[["run","ステージを1回プレイ",100],["kills","敵を10体討伐",150],["clear","ステージをクリア",300]].map(x=>"<div class='item row between'><span>"+x[1]+" <b>"+(state.missions[x[0]]?"達成済み":"未達成")+"</b></span><button data-claim='"+x[0]+"' "+(state.missions[x[0]]?"disabled":"")+">報酬 "+x[2]+"魔晶</button></div>").join("")}
+function renderStages(){$("stageList").innerHTML=Array.from({length:20},(_,i)=>{let n=i+1,locked=n>Math.max(1,state.cleared+1);return "<div class='card'><h3>ステージ "+n+"</h3><p>"+(n<=state.cleared?"クリア済み":locked?"未解放":"挑戦可能")+"</p><button data-stage='"+n+"' "+(locked?"disabled":"")+">選択</button></div>"}).join("")}
+function renderProfile(){$("profileStats").innerHTML="<div>プレイ回数 <b>"+state.totalRuns+"</b></div><div>クリア回数 <b>"+state.totalWins+"</b></div><div>総討伐数 <b>"+state.totalKills+"</b></div><div>最高到達 <b>"+state.cleared+"</b></div>"}
+function renderAll(){renderTop();renderCharacters();renderGear();renderPets();renderShop();renderMissions();renderStages();renderProfile()}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showScreen(b.dataset.go));
+document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>gacha(b.dataset.gacha));
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.usechar!==undefined){let c=state.characterCopies[+b.dataset.usechar];state.character=c.id;save();renderAll()}
+ if(b.dataset.charup!==undefined){let c=state.characterCopies[+b.dataset.charup];if(state.materials.character<1)return alert("キャラクター強化素材が足りません");if(c.level>=c.maxLevel)return alert("レベル上限です");state.materials.character--;c.level++;save();renderAll()}
+ if(b.dataset.usepet!==undefined){let p=state.pets[+b.dataset.usepet];state.equippedPet=p.id;save();renderAll()}
+ if(b.dataset.petup!==undefined){let p=state.pets[+b.dataset.petup];if(state.materials.pet<1)return alert("ペット強化素材が足りません");if(p.level>=p.maxLevel)return alert("レベル上限です");state.materials.pet--;p.level++;save();renderAll()}
+ if(b.dataset.equip){let g=state.gear.find(x=>x.id===b.dataset.equip);if(g)state.equipped[g.slot]=g.id;save();renderAll()}
+ if(b.dataset.upgear){let g=state.gear.find(x=>x.id===b.dataset.upgear);if(!g)return;let cost=g.level*50;if(state.crystal<cost)return alert("魔晶が足りません");state.crystal-=cost;g.level++;save();renderAll()}
+ if(b.dataset.lock){let g=state.gear.find(x=>x.id===b.dataset.lock);g.locked=!g.locked;save();renderAll()}
+ if(b.dataset.discard){let g=state.gear.find(x=>x.id===b.dataset.discard);if(!g||g.locked)return alert("ロック中の装備は捨てられません");if(!confirm(g.name+"を捨てますか？"))return;state.gear=state.gear.filter(x=>x.id!==g.id);if(Object.values(state.equipped).includes(g.id))state.equipped[g.slot]=null;state.materials.equipment+=Math.max(1,Math.floor(g.level/5));save();renderAll()}
+ if(b.dataset.buy){let x=SHOP.find(x=>x.id===b.dataset.buy);if(state.crystal<x.price)return alert("魔晶が足りません");state.crystal-=x.price;if(x.id==="ticket")state.tickets++;if(x.id==="equipmat")state.materials.equipment+=5;if(x.id==="charmat")state.materials.character+=2;if(x.id==="petmat")state.materials.pet+=2;if(x.id==="gems")state.gems++;save();renderAll()}
+ if(b.dataset.claim){let k=b.dataset.claim;if(state.missions[k])return;let reward={run:100,kills:150,clear:300}[k];if(k==="run"&&!state.missions.run)return;if(k==="kills"&&state.totalKills<10)return alert("討伐数が足りません");if(k==="clear"&&state.totalWins<1)return alert("クリアが必要です");state.missions[k]=true;state.crystal+=reward;save();renderAll()}
+ if(b.dataset.stage){state.stage=+b.dataset.stage;save();$("battleTitle").textContent="ステージ "+state.stage+" - 草原";showScreen("battle")}
 });
-$("signupBtn").onclick=()=>auth("signup");$("loginBtn").onclick=()=>auth("login");$("logoutBtn").onclick=()=>auth("logout");
-$("bugBtn").onclick=$("contactBtn").onclick=()=>{const t=$("reportText").value.trim();if(!t)return alert("内容を入力してください");alert("Supabase接続後に送信できるようになります。現在は送信されていません。");$("reportText").value=""};
-$("deleteBtn").onclick=()=>alert("アカウント削除は、ログイン後に本人確認を行う安全なサーバー処理として実装します。");
-renderMeta();renderLists();draw();
-</script></body></html>
+$("saveName").onclick=()=>{state.name=$("playerName").value.trim().slice(0,16)||"冒険者";save();alert("保存しました")};
+$("resetSave").onclick=()=>{if(!confirm("セーブデータを初期化しますか？"))return;localStorage.removeItem(SAVE_KEY);state=defaultState();save();renderAll();alert("新しいデータを作成しました")};
