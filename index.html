@@ -105,7 +105,7 @@ const skillPool=[
  {id:"maxmp",name:"魔力容量",rarity:"ノーマル",desc:"最大MP +15",apply:()=>{game.player.maxMP+=15}},
  {id:"maxst",name:"体力容量",rarity:"ノーマル",desc:"最大スタミナ +20",apply:()=>{game.player.maxStamina+=20}},
  {id:"attack",name:"攻撃強化",rarity:"ノーマル",desc:"攻撃力 +10%",apply:()=>{game.player.attackPower*=1.1}},
- {id:"defense",name:"防御強化",rarity:"ノーマル",desc:"防御力 +5",apply:()=>{game.player.defense+=5}},
+
  {id:"speed",name:"俊足",rarity:"レア",desc:"移動速度 +8%",apply:()=>{game.player.speed*=1.08}},
  {id:"mpregen",name:"魔力回復",rarity:"レア",desc:"MP自然回復量 +1",apply:()=>{game.player.mpRegen+=1}},
  {id:"stregen",name:"スタミナ回復",rarity:"レア",desc:"スタミナ自然回復量 +1",apply:()=>{game.player.stRegen+=1}},
@@ -115,7 +115,7 @@ const skillPool=[
 function newPlayer(){
  return {x:150,y:FLOOR,vx:0,vy:0,face:1,onGround:true,jumps:0,maxJumps:2,
   hp:100,maxHP:100,mp:60,maxMP:60,stamina:100,maxStamina:100,
-  attackPower:10,defense:0,speed:3.8,hpRegen:2,mpRegen:3,stRegen:5,
+  attackPower:10,speed:3.8,hpRegen:2,mpRegen:3,stRegen:5,
   regenClock:0,attackTimer:0,attackCooldown:0,attackDir:1,attackHit:[],
   invuln:0,revive:false,revived:false,knockX:0,knockY:0,knockCap:13,
   dodgeCooldown:0,dodgeTime:0,dodgeDir:1,hitFlash:0};
@@ -183,7 +183,7 @@ function applyKnockback(target,dir,power){
 }
 function takePlayerHit(raw,fromX,power){
  const p=game.player;if(p.invuln>0||game.ended)return;
- let amount=Math.max(1,raw-p.defense*.25);
+ let amount=Math.max(1,raw);
  p.hp=Math.max(0,p.hp-amount);p.invuln=.3;p.hitFlash=.3;
  applyKnockback(p,p.x<fromX?-1:1,power||4);damageText(p.x,p.y-55,amount,"#e34e4e");
  if(p.hp<=0&&p.revive&&!p.revived){
@@ -424,7 +424,7 @@ function pauseGame(){
  if(!game.active||game.ended)return;game.paused=true;
  const p=game.player;
  const stats="最大HP "+p.maxHP+" / 最大MP "+p.maxMP+" / 最大スタミナ "+p.maxStamina+
-  " / 攻撃力 "+Math.round(p.attackPower)+" / 防御力 "+p.defense+" / 移動速度 "+p.speed+
+  " / 攻撃力 "+Math.round(p.attackPower)+" / 移動速度 "+p.speed+
   "<br>討伐数："+game.kills+"　経過時間："+fmt(game.t);
  const skills=game.skills.length?game.skills.map(s=>s.name+" Lv."+s.level).join("、"):"なし";
  showOverlay("一時停止",stats+"<br>取得スキル："+skills,
