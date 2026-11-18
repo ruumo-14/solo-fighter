@@ -96,7 +96,7 @@ const game={
  player:null,enemies:[],projectiles:[],bosses:[],damageTexts:[],skills:[],
  xp:0,xpNeed:8,level:1,kills:0,earnedCrystal:0,earnedXP:0,
  pendingLevels:0,legendUsed:false,keys:{},doubleTap:{},eliteClock:0,
- mode:"normal",resultWin:false,skillQueue:[],commandBuffer:[],
+ mode:"normal",resultWin:false,skillQueue:[],commandBuffer:[],hitStop:0,
 };
 const rarityOrder=["ノーマル","レア","エピック","レジェンド"];
 const rarityColors={"ノーマル":"#fff","レア":"#4b9dff","エピック":"#b58cff","レジェンド":"#e6b94f"};
@@ -116,7 +116,7 @@ function newPlayer(){
  return {x:150,y:FLOOR,vx:0,vy:0,face:1,onGround:true,jumps:0,maxJumps:2,
   hp:100,maxHP:100,mp:60,maxMP:60,stamina:100,maxStamina:100,
   attackPower:10,speed:3.8,hpRegen:2,mpRegen:3,stRegen:5,
-  regenClock:0,attackTimer:0,attackCooldown:0,attackDir:1,attackHit:[],
+  regenClock:0,attackTimer:0,attackCooldown:0,attackDir:1,attackHit:[],attackCombo:0,attackMotion:"slash",attackAir:false,
   invuln:0,revive:false,revived:false,knockX:0,knockY:0,knockCap:13,
   dodgeCooldown:0,dodgeTime:0,dodgeDir:1,hitFlash:0};
 }
@@ -219,37 +219,31 @@ function spawnBoss(index){
 }
 function attack(){
  const p=game.player;if(!game.active||game.paused||p.attackCooldown>0||p.attackTimer>0)return;
- p.attackTimer=.22;p.attackCooldown=.42;p.attackDir=p.face;p.attackHit=[];
+ const motions=["slash","rising","falling"];
+ p.attackMotion=motions[p.attackCombo%motions.length];p.attackCombo++;
+ p.attackTimer=p.onGround?.24:.20;p.attackCooldown=.42;p.attackDir=p.face;p.attackHit=[];p.attackAir=!p.onGround;
  const reach=64,damage=p.attackPower;
+ let hitCount=0;
  game.enemies.forEach(e=>{
-  if(Math.abs(e.x-p.x)<=reach&&Math.abs(e.y-p.y)<=90&&(e.x-p.x)*p.attackDir>=-12){
-   e.hp-=damage;e.flash=.12;p.attackHit.push(e);
+  if(!e.dead&&Math.abs(e.x-p.x)<=reach&&Math.abs(e.y-p.y)<=105&&(e.x-p.x)*p.attackDir>=-12){
+   e.hp-=damage;e.flash=.12;p.attackHit.push(e);hitCount++;
    const dir=e.x>=p.x?1:-1;applyKnockback(e,dir,Math.min(10,2+damage*.16));
    damageText(e.x,e.y-38,damage,"#fff4c7");
   }
  });
  game.bosses.forEach(b=>{
-  if(!b.dead&&Math.abs(b.x-p.x)<reach+35&&Math.abs(b.y-p.y)<110&&(b.x-p.x)*p.attackDir>=-18){
+  if(!b.dead&&Math.abs(b.x-p.x)<reach+35&&Math.abs(b.y-p.y)<115&&(b.x-p.x)*p.attackDir>=-18){
    b.hp-=damage;b.flash=.12;applyKnockback(b,b.x>=p.x?1:-1,Math.min(3,damage*.025));
-   damageText(b.x,b.y-65,damage,"#fff4c7");
+   damageText(b.x,b.y-65,damage,"#fff4c7");hitCount++;
   }
  });
+ if(hitCount>0)game.hitStop=Math.max(game.hitStop,.035);
 }
 function jump(){
  const p=game.player;if(!game.active||game.paused)return;
  p.maxJumps=Math.max(2,Math.floor(p.maxStamina/50));
  if(p.jumps>=p.maxJumps||p.stamina<18)return;
  p.stamina-=18;p.vy=p.jumps===0?-11.5:-10.5;p.jumps++;p.onGround=false;
-}
-function dodge(dir){
- const p=game.player;if(!game.active||game.paused||p.dodgeCooldown>0||p.stamina<25)return;
- p.stamina-=25;p.dodgeCooldown=1.0;p.dodgeTime=.16;p.dodgeDir=dir;p.invuln=Math.max(p.invuln,.12);
- p.knockX=dir*10;
-}
-function tryDoubleTap(dir){
- const now=performance.now(),key=dir>0?"right":"left",last=game.doubleTap[key]||0;
- if(now-last<260)dodge(dir);
- game.doubleTap[key]=now;
 }
 function spawnProjectile(x,y,vx,vy,damage,kind){
  game.projectiles.push({x,y,vx,vy,gravity:.18,damage,life:3,kind});
@@ -318,13 +312,12 @@ function update(dt){
  const p=game.player;game.t+=dt;
  p.attackTimer=Math.max(0,p.attackTimer-dt);p.attackCooldown=Math.max(0,p.attackCooldown-dt);
  p.invuln=Math.max(0,p.invuln-dt);p.hitFlash=Math.max(0,p.hitFlash-dt);
- p.dodgeCooldown=Math.max(0,p.dodgeCooldown-dt);p.dodgeTime=Math.max(0,p.dodgeTime-dt);
  p.vx=(game.keys.right?1:0)-(game.keys.left?1:0);
  if(p.vx)p.face=Math.sign(p.vx);
  p.x+=p.vx*p.speed+(p.knockX||0);
  p.knockX=(p.knockX||0)*Math.pow(.08,dt);
  p.vy+=.55;p.y+=p.vy+(p.knockY||0);p.knockY=(p.knockY||0)*Math.pow(.08,dt);
- if(p.y>=FLOOR){p.y=FLOOR;p.vy=0;p.onGround=true;p.jumps=0}else p.onGround=false;
+ if(p.y>=FLOOR){p.y=FLOOR;p.vy=0;p.onGround=true;p.jumps=0;if(p.attackAir){p.attackTimer=0;p.attackAir=false}}else p.onGround=false;
  p.x=Math.max(18,Math.min(W-18,p.x));
  p.regenClock+=dt;if(p.regenClock>=1){p.regenClock-=1;p.hp=Math.min(p.maxHP,p.hp+p.hpRegen);p.mp=Math.min(p.maxMP,p.mp+p.mpRegen);p.stamina=Math.min(p.maxStamina,p.stamina+p.stRegen)}
  if(game.t>=5){
@@ -380,7 +373,15 @@ function draw(){
   ctx.restore();
  }
  if(!(p.invuln>0&&Math.floor(game.t*22)%2===0))actor(p.x,p.y,"#6685a8",p.face,1);
- if(p.attackTimer>0){ctx.strokeStyle="#fff0b5";ctx.lineWidth=8;ctx.beginPath();ctx.arc(p.x+p.attackDir*24,p.y-36,43,p.attackDir>0?-.85:Math.PI-.85,p.attackDir>0?.85:Math.PI+.85);ctx.stroke()}
+ if(p.attackTimer>0){
+  ctx.save();ctx.globalAlpha=.22;ctx.strokeStyle="#fff0b5";ctx.lineWidth=5;ctx.lineCap="round";
+  ctx.beginPath();
+  const cx=p.x+p.attackDir*25,cy=p.y-38;
+  if(p.attackMotion==="rising"){ctx.moveTo(cx-p.attackDir*24,cy+23);ctx.quadraticCurveTo(cx+p.attackDir*35,cy-10,cx+p.attackDir*26,cy-45)}
+  else if(p.attackMotion==="falling"){ctx.moveTo(cx-p.attackDir*22,cy-43);ctx.quadraticCurveTo(cx+p.attackDir*36,cy-8,cx+p.attackDir*25,cy+25)}
+  else{ctx.moveTo(cx-p.attackDir*20,cy-28);ctx.quadraticCurveTo(cx+p.attackDir*42,cy,cx+p.attackDir*22,cy+22)}
+  ctx.stroke();ctx.restore();
+ }
  game.enemies.forEach(e=>{
   const color=e.flash>0?"#fff":e.type==="goblin"?"#879d65":e.type==="skeleton"?"#ddd8c9":e.type==="hover"?"#a99bc6":"#b78b67";
   if(e.elite){ctx.strokeStyle=["","#d8d8d8","#e5a33c","#d94d5b"][e.elite];ctx.lineWidth=4+e.elite;ctx.beginPath();ctx.arc(e.x,e.y-35,27+e.elite*5,0,Math.PI*2);ctx.stroke()}
@@ -400,14 +401,14 @@ function draw(){
 }
 function loop(now){
  if(!game.active)return;const dt=Math.min(.04,(now-game.last)/1000||0);game.last=now;
- if(!game.paused)update(dt);draw();if(game.active)requestAnimationFrame(loop);
+ if(!game.paused){if(game.hitStop>0)game.hitStop=Math.max(0,game.hitStop-dt);else update(dt)}draw();if(game.active)requestAnimationFrame(loop);
 }
 function startGame(mode){
  document.body.classList.add("battle-mode");
  game.active=true;game.paused=false;game.ended=false;game.t=0;game.last=performance.now();game.spawnClock=0;
  game.player=newPlayer();game.enemies=[];game.projectiles=[];game.bosses=[];game.damageTexts=[];game.skills=[];
  game.xp=0;game.xpNeed=8;game.level=1;game.kills=0;game.earnedCrystal=0;game.earnedXP=0;
- game.pendingLevels=0;game.legendUsed=false;game.skillQueue=[];game.bossesDefeated=0;game.bossSpawned=[false,false,false];game.victoryTimer=0;game.eliteClock=0;game.keys={};game.doubleTap={};
+ game.pendingLevels=0;game.legendUsed=false;game.skillQueue=[];game.hitStop=0;game.bossesDefeated=0;game.bossSpawned=[false,false,false];game.victoryTimer=0;game.eliteClock=0;game.keys={};game.doubleTap={};
  hideOverlay();showScreen("battle");updateHUD();draw();requestAnimationFrame(loop);
 }
 function finish(win,message){
@@ -448,8 +449,8 @@ function keyDown(e){
  const code=e.code;
  if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Space"].includes(code))e.preventDefault();
  if(code==="Escape"){if(game.active&&!game.paused)pauseGame();else if(game.paused){hideOverlay();game.paused=false;game.last=performance.now()}return}
- if(code==="ArrowLeft"||code==="KeyA"){if(!game.keys.left)tryDoubleTap(-1);game.keys.left=true}
- if(code==="ArrowRight"||code==="KeyD"){if(!game.keys.right)tryDoubleTap(1);game.keys.right=true}
+ if(code==="ArrowLeft"||code==="KeyA")game.keys.left=true;
+ if(code==="ArrowRight"||code==="KeyD")game.keys.right=true
  if((code==="Space"||code==="ArrowUp"||code==="KeyW")&&!e.repeat)jump();
  if(code==="KeyJ"&&!e.repeat)attack();
 }
