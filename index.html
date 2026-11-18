@@ -456,7 +456,7 @@ function keyDown(e){
 }
 function keyUp(e){if(e.code==="ArrowLeft"||e.code==="KeyA")game.keys.left=false;if(e.code==="ArrowRight"||e.code==="KeyD")game.keys.right=false}
 window.addEventListener("keydown",keyDown);window.addEventListener("keyup",keyUp);
-function hold(id,key){const b=$(id);if(!b)return;b.onpointerdown=e=>{e.preventDefault();if(key==="attack")attack();else if(key==="jump")jump();else{if(!game.keys[key])tryDoubleTap(key==="left"?-1:1);game.keys[key]=true}};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{if(key==="left"||key==="right")game.keys[key]=false}}
+function hold(id,key){const b=$(id);if(!b)return;b.onpointerdown=e=>{e.preventDefault();if(key==="attack")attack();else if(key==="jump")jump();else{game.keys[key]=true}};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{if(key==="left"||key==="right")game.keys[key]=false}}
 hold("leftBtn","left");hold("rightBtn","right");hold("attackBtn","attack");hold("jumpBtn","jump");
 document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>{
  const type=b.dataset.gacha,cost=type==="s1"?5:1;if(state.gems<cost)return alert("ガチャ石が足りません");
