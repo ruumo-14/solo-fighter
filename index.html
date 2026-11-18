@@ -64,11 +64,11 @@ body.battle-mode .overlay{border-radius:0}
 </nav>
 <main class="content">
 <section class="screen active" id="home"><div class="panel hero"><div><div class="muted small">冒険者ホーム</div><h1 style="margin:5px 0">戦場へ向かおう。</h1><div class="muted">6分間の戦闘を生き残り、3体のボスを撃破せよ。</div></div><button class="primary" data-go="battle">戦闘開始 ▶</button></div><div class="cards"><div class="card"><h3>プレイヤー成長</h3><p>Lv.<b id="homeLv">1</b> / 能力ポイント <b id="points">0</b></p><button data-action="unlock">能力を解放（魔晶 100）</button></div><div class="card"><h3>所持キャラクター</h3><p id="homeChars">剣士 Lv.1</p><button data-go="characters">育成する</button></div><div class="card"><h3>現在のステージ</h3><p id="stageName">草原 1</p><p class="muted small">クリアで次のステージを解放</p><button data-go="battle">挑戦する</button></div></div><div class="panel"><h3>ゲームのルール</h3><p>2分・4分・6分にボスが出現。各ボスは出現から60秒以内に撃破しよう。最後のボスを倒すとステージクリア。</p><p class="muted small">ステージ中のレベル・プレイヤーレベル・キャラクターレベルは別々に管理されます。</p></div></section>
-<section class="screen" id="battle"><div class="panel"><div class="gamebox"><canvas id="game" width="960" height="540" aria-label="2D横視点アクションゲーム"></canvas><div class="battle-top"><button id="pauseBtn" class="round-control" aria-label="一時停止">Ⅱ</button><div class="battle-timer"><b id="clock">00:00</b><small>/ 07:00</small></div><div class="battle-stage">STAGE <b id="battleStage">草原 1</b><small>Lv.<b id="runLv">1</b></small></div></div><div class="battle-bars"><div class="battle-barline"><span>XP</span><div class="bar xpbar"><i id="xpbar"></i></div><b id="xptext">0/8</b></div><div class="battle-barline" id="bossHud" style="display:none"><span id="bossName">BOSS</span><div class="bar"><i id="bossbar"></i></div></div><div class="battle-barline"><span>HP</span><div class="bar"><i id="hpbar"></i></div><b id="hptext">100/100</b></div><div class="battle-barline"><span>MP</span><div class="bar"><i id="mpbar"></i></div><b id="mptext">60/60</b></div><div class="battle-barline"><span>ST</span><div class="bar"><i id="stbar"></i></div><b id="sttext">100/100</b></div></div><div class="battle-bottom"><div class="dpad"><button id="leftBtn" aria-label="左へ">◀</button><button id="rightBtn" aria-label="右へ">▶</button></div><div class="action-pad"><button id="jumpBtn" class="action-button jump-button">ジャンプ</button><button id="attackBtn" class="action-button attack-button">攻撃</button></div></div><div class="overlay" id="overlay"><div style="max-width:720px;width:100%"><h2 id="overlayTitle">スキル選択</h2><p id="overlayText">スキルを1つ選ぼう</p><div class="choices" id="choices"></div><button id="overlayClose" style="margin-top:12px;display:none">閉じる</button></div></div></div><div class="row" style="margin-top:9px"><button id="startBtn" class="primary">ステージ開始</button><button id="cmdBtn">コマンド</button><span class="muted small">キーボード：A・D / ←・→ / Space / J / Esc</span></div></div></section>
+<section class="screen" id="battle"><div class="panel"><div class="gamebox"><canvas id="game" width="960" height="540" aria-label="2D横視点アクションゲーム"></canvas><div class="battle-top"><button id="pauseBtn" class="round-control" aria-label="一時停止">Ⅱ</button><div class="battle-timer"><b id="clock">00:00</b><small>/ 07:00</small></div><div class="battle-stage">STAGE <b id="battleStage">草原 1</b><small>Lv.<b id="runLv">1</b></small></div></div><div class="battle-bars"><div class="battle-barline"><span>XP</span><div class="bar xpbar"><i id="xpbar"></i></div><b id="xptext">0/8</b></div><div class="battle-barline" id="bossHud" style="display:none"><span id="bossName">BOSS</span><div class="bar"><i id="bossbar"></i></div></div><div class="battle-barline"><span>HP</span><div class="bar"><i id="hpbar"></i></div><b id="hptext">100/100</b></div><div class="battle-barline"><span>MP</span><div class="bar"><i id="mpbar"></i></div><b id="mptext">60/60</b></div><div class="battle-barline"><span>ST</span><div class="bar"><i id="stbar"></i></div><b id="sttext">100/100</b></div></div><div class="battle-bottom"><div class="dpad"><button id="leftBtn" aria-label="左へ">◀</button><button id="rightBtn" aria-label="右へ">▶</button></div><div class="action-pad"><button id="jumpBtn" class="action-button jump-button">ジャンプ</button><button id="attackBtn" class="action-button attack-button">攻撃</button></div></div><div class="overlay" id="overlay"><div style="max-width:720px;width:100%"><h2 id="overlayTitle">スキル選択</h2><p id="overlayText">スキルを1つ選ぼう</p><div class="choices" id="choices"></div><button id="overlayClose" style="margin-top:12px;display:none">閉じる</button></div></div></div><div class="row" style="margin-top:9px"><button id="startBtn" class="primary">通常ステージ開始</button><button id="hardStartBtn" disabled>ハード開始（プレイヤーLv.50で解放）</button><button id="cmdBtn">コマンド</button><span class="muted small">キーボード：A・D / ←・→ / Space / J / Esc</span></div></div></section>
 <section class="screen" id="characters"><div class="panel"><h2>キャラクター</h2><p class="muted">キャラクターごとに攻撃方法と特殊能力が異なります。</p><div class="cards" id="characterList"></div><div class="row" style="margin-top:12px"><button data-action="resetChar">選択キャラのレベルをリセット</button><span class="small muted">消費魔晶の90%を返還</span></div></div></section>
 <section class="screen" id="pets"><div class="panel"><h2>ペット</h2><p>ペットは直接戦闘せず、所持効果・バフでプレイヤーを補助します。</p><div id="petList" class="cards"></div></div></section>
 <section class="screen" id="equipment"><div class="panel"><h2>装備</h2><p>装備にはレアリティと属性があります。S1はS1ガチャ限定です。</p><div id="gearList" class="list"></div><p class="small muted">属性相性：得意属性への攻撃は2倍、苦手属性への攻撃は0.5倍。ノーマル属性は相性なし。</p></div></section>
-<section class="screen" id="gacha"><div class="panel"><h2>ガチャ</h2><p>ガチャ石はショップ等から入手する想定です。初期テスト用に無料石を10個付与しています。</p><div class="cards"><div class="card"><h3>キャラクターガチャ</h3><p>キャラクター・通常装備</p><button data-gacha="character">1回引く（石1）</button></div><div class="card"><h3>ペットガチャ</h3><p>ペット・通常装備</p><button data-gacha="pet">1回引く（石1）</button></div><div class="card"><h3>S1ガチャ</h3><p>装備・S1装備</p><button data-gacha="s1">1回引く（石5）</button></div></div><p>所持ガチャ石：<b id="gems">10</b></p><div id="gachaResult" class="notice" style="display:none"></div></div></section>
+<section class="screen" id="gacha"><div class="panel"><h2>ガチャ</h2><p>ガチャ石：初期テスト用10個。100回目はエピック以上確定。各ガチャの天井は別々に記録されます。</p><p class="small">通常ガチャ：アイテム50%／ノーマル10%／レア35%／エピック4%／レジェンド1%。</p><p class="small">S1ガチャ：アイテム50%／ノーマル10%／レア33%／エピック4%／レジェンド2%／S1 1%。</p><div class="cards"><div class="card"><h3>キャラクターガチャ</h3><p>キャラクター・通常装備</p><button data-gacha="character">1回引く（石1）</button></div><div class="card"><h3>ペットガチャ</h3><p>ペット・通常装備</p><button data-gacha="pet">1回引く（石1）</button></div><div class="card"><h3>S1ガチャ</h3><p>装備・S1装備</p><button data-gacha="s1">1回引く（石5）</button></div></div><p>所持ガチャ石：<b id="gems">10</b>　ガチャチケット：<b id="tickets">0</b></p><p class="small">天井まで：キャラクター <b id="pityCharacter">100</b>回／ペット <b id="pityPet">100</b>回／S1 <b id="pityS1">100</b>回</p><div id="gachaResult" class="notice" style="display:none"></div></div></section>
 <section class="screen" id="missions"><div class="panel"><h2>ミッション</h2><div id="missionList" class="list"></div><h3 style="margin-top:18px">ストーリークエスト</h3><p>最初の一歩：草原の魔物を倒そう。ステージクリアで進行します。</p></div></section>
 <section class="screen" id="ranking"><div class="panel"><h2>ランキング</h2><p class="muted small">オンラインランキングはSupabase接続後に集計されます。現在はローカルのテスト表示です。</p><div class="cards"><div class="card"><h3>累計魔晶獲得数</h3><p id="rankCrystal">0</p></div><div class="card"><h3>エンドレス最高到達</h3><p id="rankEndless">未挑戦</p></div><div class="card"><h3>タイムアタック</h3><p id="rankTime">未記録</p></div></div><p>週間ランキングは毎週更新、累計魔晶ランキングは数値を保持し報酬のみ毎週配布する設計です。</p></div></section>
 <section class="screen" id="market"><div class="panel"><h2>プレイヤーマーケット</h2><p>プレイヤー間取引の画面です。オンライン取引を有効にするにはSupabaseの認証・取引テーブル設定が必要です。</p><div class="notice">取引の二重購入や不正な魔晶変更を防ぐため、実際の出品・購入はサーバー側処理で確定させます。</div></div></section>
@@ -78,10 +78,13 @@ body.battle-mode .overlay{border-radius:0}
 </main></div><footer>SOLO FIGHTER · 開発テスト版 · セーブは端末内に保存されます</footer></div>
 <script>
 const $=id=>document.getElementById(id);
-const defaultState={crystal:0,totalCrystal:0,playerLv:1,points:0,gems:10,stage:1,cleared:0,character:"剣士",charLevels:{剣士:1,魔法使い:1,弓使い:1},charSpent:{剣士:0,魔法使い:0,弓使い:0},pets:["小さな精霊"],gear:[{name:"旅人の剣",rarity:"ノーマル",element:"ノーマル"}],skills:[],missionsDone:[],highestEndless:0,bestTime:null};
+const defaultState={crystal:0,totalCrystal:0,playerLv:1,points:0,gems:10,tickets:0,stage:1,cleared:0,character:"剣士",charLevels:{剣士:1,魔法使い:1,弓使い:1},charSpent:{剣士:0,魔法使い:0,弓使い:0},pets:["小さな精霊"],petLevels:{"小さな精霊":1},gear:[{name:"旅人の剣",rarity:"ノーマル",element:"無属性",level:1}],materials:{equipment:0,character:0,pet:0},gachaPity:{character:0,pet:0,s1:0},skills:[],missionsDone:[],highestEndless:0,bestTime:null};
 let state={...defaultState,...JSON.parse(localStorage.getItem("soloFighterSave")||"{}")};
+state.gachaPity={...defaultState.gachaPity,...(state.gachaPity||{})};state.petLevels={...defaultState.petLevels,...(state.petLevels||{})};state.materials={...defaultState.materials,...(state.materials||{})};state.tickets=Number(state.tickets)||0;
+const GACHA_RATES={normal:{item:50,ノーマル:10,レア:35,エピック:4,レジェンド:1},s1:{item:50,ノーマル:10,レア:33,エピック:4,レジェンド:2,S1:1}};
+const CHARACTER_SPEED={剣士:3.8,魔法使い:3.6,弓使い:4.0};
 function save(){localStorage.setItem("soloFighterSave",JSON.stringify(state));renderMeta()}
-function renderMeta(){$("crystal").textContent=state.crystal;$("playerLv").textContent=state.playerLv;$("homeLv").textContent=state.playerLv;$("points").textContent=state.points;$("gems").textContent=state.gems;$("stageName").textContent="草原 "+state.stage;$("battleStage").textContent="草原 "+state.stage;$("rankCrystal").textContent=state.totalCrystal;$("homeChars").textContent=state.character+" Lv."+state.charLevels[state.character];$("rankEndless").textContent=state.highestEndless||"未挑戦";$("rankTime").textContent=state.bestTime?state.bestTime+"秒":"未記録"}
+function renderMeta(){$("crystal").textContent=state.crystal;$("playerLv").textContent=state.playerLv;$("homeLv").textContent=state.playerLv;$("points").textContent=state.points;$("gems").textContent=state.gems;$("tickets").textContent=state.tickets;$("pityCharacter").textContent=100-(state.gachaPity.character||0);$("pityPet").textContent=100-(state.gachaPity.pet||0);$("pityS1").textContent=100-(state.gachaPity.s1||0);$("hardStartBtn").disabled=state.playerLv<50;$("hardStartBtn").textContent=state.playerLv<50?"ハード開始（プレイヤーLv.50で解放）":"ハードステージ開始";$("stageName").textContent="草原 "+state.stage+" / 20";$("battleStage").textContent="草原 "+state.stage;$("rankCrystal").textContent=state.totalCrystal;$("homeChars").textContent=state.character+" Lv."+state.charLevels[state.character];$("rankEndless").textContent=state.highestEndless||"未挑戦";$("rankTime").textContent=state.bestTime?state.bestTime+"秒":"未記録"}
 function showScreen(name){if(name!=="battle")document.body.classList.remove("battle-mode");document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===name));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===name));if(name==="battle")draw()}
 document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showScreen(b.dataset.go));
 document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{if(b.dataset.action==="unlock"){if(state.crystal<100)return alert("魔晶が足りません");state.crystal-=100;state.points++;state.playerLv++;save()}if(b.dataset.action==="resetChar"){const n=state.character,spent=state.charSpent[n]||0;state.crystal+=Math.floor(spent*.9);state.charSpent[n]=0;state.charLevels[n]=1;save();renderLists();alert("レベルをリセットしました。使用魔晶の90%を返還しました。")}});
@@ -115,7 +118,7 @@ const skillPool=[
 function newPlayer(){
  return {x:150,y:FLOOR,vx:0,vy:0,face:1,onGround:true,jumps:0,maxJumps:2,
   hp:100,maxHP:100,mp:60,maxMP:60,stamina:100,maxStamina:100,
-  attackPower:10,speed:3.8,hpRegen:2,mpRegen:3,stRegen:5,
+  attackPower:10,speed:(CHARACTER_SPEED[state.character]||3.8),hpRegen:2,mpRegen:3,stRegen:5,
   regenClock:0,attackTimer:0,attackCooldown:0,attackDir:1,attackHit:[],attackCombo:0,attackMotion:"slash",attackAir:false,
   invuln:0,revive:false,revived:false,knockX:0,knockY:0,knockCap:13,
   dodgeCooldown:0,dodgeTime:0,dodgeDir:1,hitFlash:0};
@@ -192,7 +195,7 @@ function takePlayerHit(raw,fromX,power){
  }
 }
 function spawnEnemy(){
- const t=game.t,scale=1+t/180+(state.stage-1)*.25;
+ const t=game.t,scale=(1+t/180+(state.stage-1)*.25)*(game.mode==="hard"?1.7:1);
  const roll=Math.random(),type=roll<.34?"beast":roll<.60?"goblin":roll<.82?"skeleton":"hover";
  const side=Math.random()<.5?-1:1,x=side<0?-28:W+28;
  const base={beast:28,goblin:34,skeleton:22,hover:26}[type],hp=Math.round(base*scale);
@@ -212,7 +215,7 @@ function spawnElite(){
 }
 function spawnBoss(index){
  const names=["古代の守護者","紅蓮の獣王","深淵の巨人"];
- const hp=[360,560,850][index]+game.t*1.1;
+ const hp=([360,560,850][index]+game.t*1.1)*(game.mode==="hard"?1.7:1);
  game.bosses.push({index,name:names[index],x:W+20,y:FLOOR-20,w:90+index*8,h:95+index*10,
   hp:hp,maxHP:hp,damage:14+index*5,speed:1.1+index*.12,state:"approach",timer:0,
   attackClock:1.2,phase:1,knockX:0,knockY:0,knockCap:4,dead:false});
@@ -404,7 +407,7 @@ function loop(now){
  if(!game.paused){if(game.hitStop>0)game.hitStop=Math.max(0,game.hitStop-dt);else update(dt)}draw();if(game.active)requestAnimationFrame(loop);
 }
 function startGame(mode){
- document.body.classList.add("battle-mode");
+ game.mode=mode||"normal";document.body.classList.add("battle-mode");
  game.active=true;game.paused=false;game.ended=false;game.t=0;game.last=performance.now();game.spawnClock=0;
  game.player=newPlayer();game.enemies=[];game.projectiles=[];game.bosses=[];game.damageTexts=[];game.skills=[];
  game.xp=0;game.xpNeed=8;game.level=1;game.kills=0;game.earnedCrystal=0;game.earnedXP=0;
@@ -413,7 +416,7 @@ function startGame(mode){
 }
 function finish(win,message){
  if(game.ended)return;game.active=false;game.ended=true;game.resultWin=win;
- if(win){state.cleared=Math.max(state.cleared,state.stage);state.stage=Math.max(state.stage,state.cleared+1);state.missionsDone.push("clear")}
+ if(win){state.cleared=Math.max(state.cleared,state.stage);state.stage=Math.min(20,Math.max(state.stage,state.cleared+1));state.missionsDone.push("clear")}
  save();
  const title=win?"STAGE CLEAR":"GAME OVER";
  const details=message+"<br>経過時間："+fmt(game.t)+"<br>討伐数："+game.kills+"<br>獲得魔晶："+game.earnedCrystal+"<br>獲得経験値："+game.earnedXP+"<br>到達レベル："+game.level;
@@ -431,7 +434,7 @@ function pauseGame(){
  showOverlay("一時停止",stats+"<br>取得スキル："+skills,
   '<button class="choice" id="resumeCmd">戦闘に戻る</button><button class="choice" id="skillListCmd">スキル詳細</button><button class="choice" id="quitCmd">タイトルへ戻る</button>',false);
 }
-$("startBtn").onclick=()=>startGame("normal");
+$("startBtn").onclick=()=>startGame("normal");$("hardStartBtn").onclick=()=>{if(state.playerLv<50)return alert("ハードモードはプレイヤーLv.50で解放されます");startGame("hard")};
 $("pauseBtn").onclick=pauseGame;
 $("cmdBtn").onclick=pauseGame;
 $("choices").addEventListener("click",e=>{
@@ -458,13 +461,62 @@ function keyUp(e){if(e.code==="ArrowLeft"||e.code==="KeyA")game.keys.left=false;
 window.addEventListener("keydown",keyDown);window.addEventListener("keyup",keyUp);
 function hold(id,key){const b=$(id);if(!b)return;b.onpointerdown=e=>{e.preventDefault();if(key==="attack")attack();else if(key==="jump")jump();else{game.keys[key]=true}};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{if(key==="left"||key==="right")game.keys[key]=false}}
 hold("leftBtn","left");hold("rightBtn","right");hold("attackBtn","attack");hold("jumpBtn","jump");
+function weightedRarity(type,pityCount){
+ const table=type==="s1"?GACHA_RATES.s1:GACHA_RATES.normal;
+ if(pityCount>=100){
+  const top=type==="s1"?["エピック","レジェンド","S1"]:["エピック","レジェンド"];
+  return top[Math.floor(Math.random()*top.length)];
+ }
+ let n=Math.random()*100;
+ for(const [rarity,weight] of Object.entries(table)){n-=weight;if(n<0)return rarity}
+ return "レア";
+}
+function grantGachaItem(){
+ const items=[
+  {name:"装備強化素材",kind:"equipment",amount:1},
+  {name:"キャラクター強化素材",kind:"character",amount:1},
+  {name:"ペット強化素材",kind:"pet",amount:1},
+  {name:"魔晶",kind:"crystal",amount:40},
+  {name:"ガチャチケット",kind:"ticket",amount:1}
+ ];
+ const item=items[Math.floor(Math.random()*items.length)];
+ if(item.kind==="crystal"){state.crystal+=item.amount;state.totalCrystal+=item.amount}
+ else if(item.kind==="ticket")state.tickets+=item.amount;
+ else state.materials[item.kind]=(state.materials[item.kind]||0)+item.amount;
+ return item.name+(item.amount>1?" ×"+item.amount:"");
+}
+function grantRarityReward(type,rarity){
+ const names={character:["剣士","魔法使い","弓使い"],pet:["小さな精霊","月うさぎ","風の精霊"]};
+ if(type==="s1"){
+  const name=rarity==="S1"?"星喰いの剣":rarity==="レジェンド"?"星守りの鎧":rarity==="エピック"?"星紋の靴":"守護の盾";
+  state.gear.push({name,rarity,element:"無属性",level:1});
+  return rarity+"装備："+name;
+ }
+ if(Math.random()<.35){
+  const name=rarity==="ノーマル"?"旅人の剣":rarity==="レア"?"風切りの剣":rarity==="エピック"?"蒼月の剣":"紅蓮の剣";
+  state.gear.push({name,rarity,element:"無属性",level:1});
+  return rarity+"装備："+name;
+ }
+ if(type==="pet"){
+  const base=names.pet[Math.floor(Math.random()*names.pet.length)],name=base+"（"+rarity+"）";
+  state.pets.push(name);state.petLevels[name]=1;
+  return rarity+"ペット："+name;
+ }
+ const base=names.character[Math.floor(Math.random()*names.character.length)],key=base+"（"+rarity+"）";
+ state.charLevels[key]=state.charLevels[key]||1;state.charSpent[key]=0;
+ return rarity+"キャラクター："+key;
+}
 document.querySelectorAll("[data-gacha]").forEach(b=>b.onclick=()=>{
- const type=b.dataset.gacha,cost=type==="s1"?5:1;if(state.gems<cost)return alert("ガチャ石が足りません");
- state.gems-=cost;let result;
- if(type==="s1"){result=Math.random()<.025?"S1装備：星喰いの剣":Math.random()<.2?"レジェンド装備：紅蓮の鎧":"レア装備：守護の盾";state.gear.push({name:result.split("：")[1],rarity:result.split("装備：")[0],element:"炎"})}
- else if(type==="pet"){result=Math.random()<.2?"ペット：月うさぎ":"ペット：風の精霊";state.pets.push(result.split("：")[1])}
- else{result=Math.random()<.15?"キャラクター：魔法使い":"装備：旅人の剣";if(result.startsWith("キャラクター"))state.charLevels["魔法使い"]??=1;else state.gear.push({name:"旅人の剣",rarity:"ノーマル",element:"ノーマル"})}
- $("gachaResult").style.display="block";$("gachaResult").textContent="獲得："+result;save();renderLists();
+ const type=b.dataset.gacha,cost=type==="s1"?5:1;
+ if(state.gems<cost)return alert("ガチャ石が足りません");
+ state.gems-=cost;
+ const pity=(state.gachaPity[type]||0)+1;
+ const rarity=weightedRarity(type,pity);
+ const result=rarity==="item"?grantGachaItem():grantRarityReward(type,rarity);
+ state.gachaPity[type]=pity>=100?0:pity;
+ $("gachaResult").style.display="block";
+ $("gachaResult").textContent="獲得："+result+(pity>=100?"（100回天井・エピック以上確定）":"");
+ save();renderLists();
 });
 $("signupBtn").onclick=()=>auth("signup");$("loginBtn").onclick=()=>auth("login");$("logoutBtn").onclick=()=>auth("logout");
 $("bugBtn").onclick=$("contactBtn").onclick=()=>{const t=$("reportText").value.trim();if(!t)return alert("内容を入力してください");alert("Supabase接続後に送信できるようになります。現在は送信されていません。");$("reportText").value=""};
