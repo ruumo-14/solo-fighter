@@ -134,7 +134,11 @@ function attack(){
  const p=G.p;if(!G.active||G.paused||p.attackCooldown>0||p.attackTimer>0)return;
  const motions=["slash","rising","falling"];p.attackMotion=motions[p.attackCombo%3];p.attackCombo++;
  p.attackTimer=p.ground?.24:.20;p.attackCooldown=.42;p.attackDir=p.face;
- const damage=p.atk;let hits=0;\n // 剣の振りで前方の矢を撃ち落とす\n for(const q of G.shots){if(q.life>0&&(q.x-p.x)*p.attackDir>-18&&(q.x-p.x)*p.attackDir<112&&Math.abs(q.y-(p.y+25))<82){q.life=0;damageText(q.x,q.y,"撃ち落とし！","#9fe8ff");G.hitStop=.025}}\n // 2段目の斬り上げに、前方へ伸びる魔法斬撃を追加\n if(p.attackMotion==="rising"){G.swordWaves.push({x:p.x+p.attackDir*25,y:p.y+24,dir:p.attackDir,life:.75,damage:Math.round(damage*.8),hit:[]})}
+ const damage=p.atk;let hits=0;
+ // 剣の振りで前方の矢を撃ち落とす
+ for(const q of G.shots){if(q.life>0&&(q.x-p.x)*p.attackDir>-18&&(q.x-p.x)*p.attackDir<112&&Math.abs(q.y-(p.y+25))<82){q.life=0;damageText(q.x,q.y,"撃ち落とし！","#9fe8ff");G.hitStop=.025}}
+ // 2段目の斬り上げに、前方へ伸びる魔法斬撃を追加
+ if(p.attackMotion==="rising"){G.swordWaves.push({x:p.x+p.attackDir*25,y:p.y+24,dir:p.attackDir,life:.75,damage:Math.round(damage*.8),hit:[]})}
  for(const e of G.enemies){if(e.dead||Math.abs(e.x-p.x)>p.range||Math.abs(e.y-(p.y+p.h/2))>115||(e.x-p.x)*p.attackDir< -12)continue;
  e.hp-=damage;e.flash=.12;knockback(e,e.x>=p.x?1:-1,Math.min(10,2+damage*.16));damageText(e.x,e.y-35,damage,"#fff4c7");hits++;if(e.hp<=0)kill(e)}
  if(G.boss&&Math.abs(G.boss.x-p.x)<p.range+35&&(G.boss.x-p.x)*p.attackDir>=-18){G.boss.hp-=damage;G.boss.flash=.12;knockback(G.boss,G.boss.x>=p.x?1:-1,Math.min(3,damage*.025));damageText(G.boss.x,G.boss.y-65,damage,"#fff4c7");hits++;if(G.boss.hp<=0)bossDown()}
@@ -153,8 +157,10 @@ function update(dt){
  else e.x+=dir*e.spd;
  if(Math.abs(d)<30&&e.cd<=0){hit(e.atk,e.x);e.cd=1.4}}
  G.enemies=G.enemies.filter(e=>!e.dead);
- for(const q of G.shots){q.x+=q.vx;q.y+=q.vy||0;q.vy=(q.vy||0)+.18;q.life-=dt;if(Math.abs(q.x-p.x)<20&&Math.abs(q.y-(p.y+25))<24&&q.life>0){hit(q.damage,q.x);q.life=0}}
+ for(const q of G.shots){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=520*dt;q.life-=dt;if(Math.abs(q.x-p.x)<20&&Math.abs(q.y-(p.y+25))<24&&q.life>0){hit(q.damage,q.x);q.life=0}}
  G.shots=G.shots.filter(q=>q.life>0);
+ for(const w of G.swordWaves){w.x+=w.dir*330*dt;w.life-=dt;for(const e of G.enemies){if(e.dead||w.hit.includes(e))continue;if(Math.abs(e.x-w.x)<28&&Math.abs(e.y-w.y)<90){e.hp-=w.damage;e.flash=.12;knockback(e,e.x>=w.x?1:-1,4);damageText(e.x,e.y-38,w.damage,"#a9eaff");w.hit.push(e);if(e.hp<=0)kill(e)}}if(G.boss&&!w.hit.includes(G.boss)&&Math.abs(G.boss.x-w.x)<55&&Math.abs(G.boss.y-w.y)<125){G.boss.hp-=w.damage;G.boss.flash=.12;damageText(G.boss.x,G.boss.y-65,w.damage,"#a9eaff");w.hit.push(G.boss);if(G.boss.hp<=0)bossDown()}}
+ G.swordWaves=G.swordWaves.filter(w=>w.life>0);
  if(G.boss){let b=G.boss;b.flash=Math.max(0,(b.flash||0)-dt);b.knockX=(b.knockX||0)*Math.pow(.08,dt);b.x+=b.knockX;b.cd-=dt;let d=p.x-b.x;if(Math.abs(d)>100)b.x+=Math.sign(d)*.7;if(b.cd<=0){hit(14*(G.mode==="hard"?1.5:1),b.x);b.cd=1.8}b.limit-=dt;if(b.limit<=0){end(false);return}}
  if(G.chest&&Math.abs(G.chest.x-p.x)<38){G.chest=null;let r=Math.random();if(r<.5)p.hp=Math.min(p.max,p.hp+p.max*.3);else if(r<.8)state.gems++;else state.tickets++;save()}
  [120,240,360].forEach((t,i)=>{let key="b"+t;if(G.t>=t&&!G.flags[key]){G.flags[key]=true;let hp=[360,560,850][i]*(G.mode==="hard"?1.65:1);G.boss={i,x:W-130,y:F-100,hp,max:hp,cd:2,limit:60,flash:0,knockX:0}}});
@@ -169,10 +175,11 @@ function draw(){
  const p=G.p;
  function actor(x,y,color,face,scale=1,flash=false){X.save();X.translate(x,y);X.scale(scale,scale);X.fillStyle="#0003";X.beginPath();X.ellipse(0,3,20,6,0,0,Math.PI*2);X.fill();X.fillStyle=flash?"#fff":color;X.strokeStyle="#302d29";X.lineWidth=3;X.fillRect(-15,-39,30,35);X.strokeRect(-15,-39,30,35);X.fillStyle="#f1d2ad";X.beginPath();X.arc(0,-47,13,0,Math.PI*2);X.fill();X.stroke();X.fillStyle="#fff";X.fillRect(face>0?2:-10,-51,7,8);X.fillStyle="#252525";X.fillRect(face>0?5:-7,-49,3,4);X.restore()}
  if(!(p.inv>0&&Math.floor(G.t*22)%2===0))actor(p.x,p.y+p.h,"#6685a8",p.face,1,p.hitFlash>0);
- if(p.attackTimer>0){X.save();X.globalAlpha=.34;X.strokeStyle="#fff0b5";X.lineWidth=6;X.lineCap="round";X.beginPath();const cx=p.x+p.attackDir*25,cy=p.y-38;if(p.attackMotion==="rising"){X.moveTo(cx-p.attackDir*24,cy+23);X.quadraticCurveTo(cx+p.attackDir*35,cy-10,cx+p.attackDir*26,cy-45)}else if(p.attackMotion==="falling"){X.moveTo(cx-p.attackDir*22,cy-43);X.quadraticCurveTo(cx+p.attackDir*36,cy-8,cx+p.attackDir*25,cy+25)}else{X.moveTo(cx-p.attackDir*20,cy-28);X.quadraticCurveTo(cx+p.attackDir*42,cy,cx+p.attackDir*22,cy+22)}X.stroke();X.restore()}
+ if(p.attackTimer>0){X.save();X.globalAlpha=.34;X.strokeStyle="#fff0b5";X.lineWidth=6;X.lineCap="round";X.beginPath();const cx=p.x+p.attackDir*25,cy=p.y+p.h-38;if(p.attackMotion==="rising"){X.moveTo(cx-p.attackDir*24,cy+23);X.quadraticCurveTo(cx+p.attackDir*35,cy-10,cx+p.attackDir*26,cy-45)}else if(p.attackMotion==="falling"){X.moveTo(cx-p.attackDir*22,cy-43);X.quadraticCurveTo(cx+p.attackDir*36,cy-8,cx+p.attackDir*25,cy+25)}else{X.moveTo(cx-p.attackDir*20,cy-28);X.quadraticCurveTo(cx+p.attackDir*42,cy,cx+p.attackDir*22,cy+22)}X.stroke();X.restore()}
  for(const e of G.enemies){let color=e.t==="goblin"?"#879d65":e.t==="skeleton"?"#ddd8c9":e.t==="hover"?"#a99bc6":"#b78b67";if(e.wind>0){X.fillStyle="#d94b4b55";X.beginPath();X.ellipse(e.x+(e.face||1)*30,e.y-25,38,22,0,0,Math.PI*2);X.fill()}actor(e.x,e.y,color,e.face||1,e.t==="hover"?.8:1,e.flash>0)}
  if(G.boss){let b=G.boss;X.save();X.translate(b.x,b.y);X.fillStyle="#0003";X.beginPath();X.ellipse(0,5,48,9,0,0,Math.PI*2);X.fill();X.fillStyle=b.flash>0?"#fff":b.i===0?"#7b8d80":b.i===1?"#bd6952":"#756b8e";X.strokeStyle="#292929";X.lineWidth=5;X.fillRect(-45,-100,90,100);X.strokeRect(-45,-100,90,100);X.fillStyle="#f6e6cb";X.fillRect(-25,-72,18,17);X.fillRect(8,-72,18,17);X.fillStyle="#222";X.fillRect(-20,-68,7,10);X.fillRect(13,-68,7,10);X.restore();X.fillStyle="#333";X.fillRect(170,18,560,14);X.fillStyle="#e34";X.fillRect(170,18,560*b.hp/b.max,14)}
- for(const q of G.shots){X.save();X.translate(q.x,q.y);X.rotate(Math.atan2(q.vy,q.vx));X.strokeStyle="#65452b";X.lineWidth=4;X.beginPath();X.moveTo(-10,0);X.lineTo(10,0);X.stroke();X.fillStyle="#d7d0bd";X.beginPath();X.moveTo(12,0);X.lineTo(4,-4);X.lineTo(4,4);X.fill();X.restore()}\n for(const w of G.swordWaves){X.save();X.globalAlpha=Math.max(0,w.life/.75);X.strokeStyle="#a9eaff";X.lineWidth=8;X.shadowColor="#65cfff";X.shadowBlur=16;X.beginPath();X.arc(w.x,w.y,22,-.9, .9);X.stroke();X.restore()}
+ for(const q of G.shots){X.save();X.translate(q.x,q.y);X.rotate(Math.atan2(q.vy,q.vx));X.strokeStyle="#65452b";X.lineWidth=4;X.beginPath();X.moveTo(-10,0);X.lineTo(10,0);X.stroke();X.fillStyle="#d7d0bd";X.beginPath();X.moveTo(12,0);X.lineTo(4,-4);X.lineTo(4,4);X.fill();X.restore()}
+ for(const w of G.swordWaves){X.save();X.globalAlpha=Math.max(0,w.life/.75);X.strokeStyle="#a9eaff";X.lineWidth=8;X.shadowColor="#65cfff";X.shadowBlur=16;X.beginPath();X.arc(w.x,w.y,22,-.9, .9);X.stroke();X.restore()}
  for(const d of G.damageTexts){X.globalAlpha=Math.max(0,d.life/.8);X.fillStyle=d.color;X.font="bold 16px sans-serif";X.textAlign="center";X.fillText(d.text,d.x,d.y);X.globalAlpha=1}X.textAlign="left";
  if(G.chest){X.fillStyle="#f2bd4d";X.fillRect(G.chest.x-14,F-28,28,24);X.fillStyle="#74451f";X.fillRect(G.chest.x-14,F-17,28,4)}
  X.fillStyle="#fff";X.font="14px sans-serif";X.fillText(G.mode+" "+clock(G.t),W-140,30);
