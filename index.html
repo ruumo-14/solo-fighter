@@ -67,7 +67,7 @@ body.battle-mode .overlay{border-radius:0}
 <section class="screen" id="battle"><div class="panel"><div class="gamebox"><canvas id="game" width="960" height="540" aria-label="2D横視点アクションゲーム"></canvas><div class="battle-top"><button id="pauseBtn" class="round-control" aria-label="一時停止">Ⅱ</button><div class="battle-timer"><b id="clock">00:00</b><small>/ 07:00</small></div><div class="battle-stage">STAGE <b id="battleStage">草原 1</b><small>Lv.<b id="runLv">1</b></small></div></div><div class="battle-bars"><div class="battle-barline"><span>XP</span><div class="bar xpbar"><i id="xpbar"></i></div><b id="xptext">0/8</b></div><div class="battle-barline" id="bossHud" style="display:none"><span id="bossName">BOSS</span><div class="bar"><i id="bossbar"></i></div></div><div class="battle-barline"><span>HP</span><div class="bar"><i id="hpbar"></i></div><b id="hptext">100/100</b></div><div class="battle-barline"><span>MP</span><div class="bar"><i id="mpbar"></i></div><b id="mptext">60/60</b></div><div class="battle-barline"><span>ST</span><div class="bar"><i id="stbar"></i></div><b id="sttext">100/100</b></div></div><div class="battle-bottom"><div class="dpad"><button id="leftBtn" aria-label="左へ">◀</button><button id="rightBtn" aria-label="右へ">▶</button></div><div class="action-pad"><button id="jumpBtn" class="action-button jump-button">ジャンプ</button><button id="attackBtn" class="action-button attack-button">攻撃</button></div></div><div class="overlay" id="overlay"><div style="max-width:720px;width:100%"><h2 id="overlayTitle">スキル選択</h2><p id="overlayText">スキルを1つ選ぼう</p><div class="choices" id="choices"></div><button id="overlayClose" style="margin-top:12px;display:none">閉じる</button></div></div></div><div class="row" style="margin-top:9px"><button id="startBtn" class="primary">通常ステージ開始</button><button id="hardStartBtn" disabled>ハード開始（プレイヤーLv.50で解放）</button><button id="cmdBtn">コマンド</button><span class="muted small">キーボード：A・D / ←・→ / Space / J / Esc</span></div></div></section>
 <section class="screen" id="characters"><div class="panel"><h2>キャラクター</h2><p class="muted">キャラクターごとに攻撃方法と特殊能力が異なります。</p><div class="cards" id="characterList"></div><div class="row" style="margin-top:12px"><button data-action="resetChar">選択キャラのレベルをリセット</button><span class="small muted">消費魔晶の90%を返還</span></div></div></section>
 <section class="screen" id="pets"><div class="panel"><h2>ペット</h2><p>ペットは直接戦闘せず、所持効果・バフでプレイヤーを補助します。</p><div id="petList" class="cards"></div></div></section>
-<section class="screen" id="equipment"><div class="panel"><h2>装備</h2><p>装備にはレアリティと属性があります。S1はS1ガチャ限定です。</p><div id="gearList" class="list"></div><p class="small muted">属性相性：得意属性への攻撃は2倍、苦手属性への攻撃は0.5倍。ノーマル属性は相性なし。</p></div></section>
+<section class="screen" id="equipment"><div class="panel"><h2>装備</h2><p>装備にはレアリティと属性があります。S1はS1ガチャ限定です。</p><div id="gearList" class="list"></div><p class="small muted">武器属性は特殊効果に関係します。属性同士の有利・不利によるダメージ倍率はありません。</p></div></section>
 <section class="screen" id="gacha"><div class="panel"><h2>ガチャ</h2><p>ガチャ石：初期テスト用10個。100回目はエピック以上確定。各ガチャの天井は別々に記録されます。</p><p class="small">通常ガチャ：アイテム50%／ノーマル10%／レア35%／エピック4%／レジェンド1%。</p><p class="small">S1ガチャ：アイテム50%／ノーマル10%／レア33%／エピック4%／レジェンド2%／S1 1%。</p><div class="cards"><div class="card"><h3>キャラクターガチャ</h3><p>キャラクター・通常装備</p><button data-gacha="character">1回引く（石1）</button></div><div class="card"><h3>ペットガチャ</h3><p>ペット・通常装備</p><button data-gacha="pet">1回引く（石1）</button></div><div class="card"><h3>S1ガチャ</h3><p>装備・S1装備</p><button data-gacha="s1">1回引く（石5）</button></div></div><p>所持ガチャ石：<b id="gems">10</b>　ガチャチケット：<b id="tickets">0</b></p><p class="small">天井まで：キャラクター <b id="pityCharacter">100</b>回／ペット <b id="pityPet">100</b>回／S1 <b id="pityS1">100</b>回</p><div id="gachaResult" class="notice" style="display:none"></div></div></section>
 <section class="screen" id="missions"><div class="panel"><h2>ミッション</h2><div id="missionList" class="list"></div><h3 style="margin-top:18px">ストーリークエスト</h3><p>最初の一歩：草原の魔物を倒そう。ステージクリアで進行します。</p></div></section>
 <section class="screen" id="ranking"><div class="panel"><h2>ランキング</h2><p class="muted small">オンラインランキングはSupabase接続後に集計されます。現在はローカルのテスト表示です。</p><div class="cards"><div class="card"><h3>累計魔晶獲得数</h3><p id="rankCrystal">0</p></div><div class="card"><h3>エンドレス最高到達</h3><p id="rankEndless">未挑戦</p></div><div class="card"><h3>タイムアタック</h3><p id="rankTime">未記録</p></div></div><p>週間ランキングは毎週更新、累計魔晶ランキングは数値を保持し報酬のみ毎週配布する設計です。</p></div></section>
@@ -473,13 +473,13 @@ function weightedRarity(type,pityCount){
 }
 function grantGachaItem(){
  const items=[
-  {name:"装備強化素材",kind:"equipment",amount:1},
-  {name:"キャラクター強化素材",kind:"character",amount:1},
-  {name:"ペット強化素材",kind:"pet",amount:1},
-  {name:"魔晶",kind:"crystal",amount:40},
-  {name:"ガチャチケット",kind:"ticket",amount:1}
+  {name:"装備強化素材",kind:"equipment",amount:1,weight:35},
+  {name:"キャラクター強化素材",kind:"character",amount:1,weight:25},
+  {name:"ペット強化素材",kind:"pet",amount:1,weight:25},
+  {name:"魔晶",kind:"crystal",amount:40,weight:14},
+  {name:"ガチャチケット",kind:"ticket",amount:1,weight:1}
  ];
- const item=items[Math.floor(Math.random()*items.length)];
+ let roll=Math.random()*100,item=items[0];for(const candidate of items){roll-=candidate.weight;if(roll<0){item=candidate;break}}
  if(item.kind==="crystal"){state.crystal+=item.amount;state.totalCrystal+=item.amount}
  else if(item.kind==="ticket")state.tickets+=item.amount;
  else state.materials[item.kind]=(state.materials[item.kind]||0)+item.amount;
