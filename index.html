@@ -115,6 +115,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)r
 });
 $("saveName").onclick=()=>{state.name=$("playerName").value.trim().slice(0,16)||"冒険者";save();alert("保存しました")};
 $("resetSave").onclick=()=>{if(!confirm("セーブデータを初期化しますか？"))return;localStorage.removeItem(SAVE_KEY);state=defaultState();save();renderAll();alert("新しいデータを作成しました")};
+renderAll();showScreen("home");
 </script><script>
 const G={active:false,paused:false,t:0,last:0,p:null,enemies:[],shots:[],boss:null,chest:null,spawn:0,xp:0,need:8,lv:1,kills:0,reward:0,flags:{},keys:{},skills:[]},C=$("arena"),X=C.getContext("2d"),W=C.width,H=C.height,F=365;
 function player(){let c=charData(),pet=petData();return{x:100,y:F-58,w:36,h:58,v:0,vy:0,hp:c.hp,max:c.hp,mp:50,st:100,atk:c.attack,speed:c.speed,range:85,face:1,jumps:0,ground:true,cd:0,inv:0}}
