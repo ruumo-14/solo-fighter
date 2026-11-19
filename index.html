@@ -122,15 +122,53 @@ function player(){let c=charData(),pet=petData();return{x:100,y:F-58,w:36,h:58,v
 function runLoop(){if(!G.loopRunning&&G.active&&!G.paused){G.loopRunning=true;requestAnimationFrame(tick)}}
 function startBattle(mode){if(mode==="hard"&&state.playerLv<50)return alert("ハードはプレイヤーLv.50で解放");Object.assign(G,{active:true,paused:false,ended:false,t:0,last:performance.now(),p:player(),enemies:[],shots:[],swordWaves:[],boss:null,chest:null,spawn:1,xp:0,need:8,lv:1,kills:0,reward:0,flags:{},keys:{},skills:[],mode});$("battleOverlay").classList.add("hidden");runLoop()}
 $("normalStart").onclick=()=>startBattle("normal");$("hardStart").onclick=()=>startBattle("hard");$("endlessStart").onclick=()=>startBattle("endless");
-const SK=[["攻撃力＋10%",p=>p.atk*=1.1],["最大HP＋10%",p=>p.max*=1.1],["攻撃範囲＋20%",p=>p.range*=1.2]];
-function levelUp(n){G.xp+=n;while(G.xp>=G.need){G.xp-=G.need;G.lv++;G.need=Math.floor(G.need*1.35);G.paused=true;let a=[0,0,0].map(()=>SK[Math.floor(Math.random()*SK.length)]);G.pick=a;$("overlayContent").innerHTML="<h2>レベルアップ！</h2><div class='choices'>"+a.map((s,i)=>"<button class='choice' data-skill='"+i+"'>"+s[0]+"</button>").join("")+"</div>";$("battleOverlay").classList.remove("hidden")}}
-$("overlayContent").addEventListener("click",e=>{let b=e.target.closest("[data-skill]");if(!b||!G.pick)return;let s=G.pick[+b.dataset.skill];s[1](G.p);G.skills.push(s[0]);G.pick=null;G.paused=false;$("battleOverlay").classList.add("hidden");G.last=performance.now();runLoop()});
-function spawn(){let t=["beast","goblin","skeleton","hover"][Math.floor(Math.random()*4)],right=Math.random()<.5,k=(1+(state.stage-1)*.15)*(G.mode==="hard"?1.65:1);G.enemies.push({t,x:right?W+20:-20,y:t==="hover"?240:F,hp:40*k,max:40*k,spd:1.1*(G.mode==="hard"?1.15:1),atk:6*k,cd:1+Math.random(),flash:0,knockX:0,wind:0,face:right?-1:1})}
+const SK_BASE=[
+ {key:"attack",name:"攻撃力強化",apply:(p,r)=>{p.atk*=1+r}},
+ {key:"vitality",name:"生命力強化",apply:(p,r)=>{let add=p.max*r;p.max+=add;p.hp=Math.min(p.max,p.hp+add*.5)}},
+ {key:"range",name:"攻撃範囲強化",apply:(p,r)=>{p.range*=1+r}}
+];
+const SK_RARITY=[
+ {name:"ノーマル",className:"Normal",rate:.70,power:.08},
+ {name:"レア",className:"Rare",rate:.20,power:.15},
+ {name:"エピック",className:"Epic",rate:.08,power:.25},
+ {name:"レジェンド",className:"Legendary",rate:.02,power:.40}
+];
+function rollSkillRarity(boss=false){let r=Math.random();if(boss){if(r<.02)return SK_RARITY[3];if(r<.10)return SK_RARITY[2];return SK_RARITY[1]}if(r<.70)return SK_RARITY[0];if(r<.90)return SK_RARITY[1];if(r<.98)return SK_RARITY[2];return SK_RARITY[3]}
+function makeSkillChoices(boss=false){
+ const options=[],used=new Set(),hasLegend=G.skills.some(x=>x.rarity==="レジェンド");
+ for(let tries=0;options.length<3&&tries<80;tries++){
+  const base=SK_BASE[Math.floor(Math.random()*SK_BASE.length)],owned=G.skills.find(x=>x.key===base.key);
+  if(used.has(base.key)||(owned&&owned.level>=5))continue;
+  let rarity=owned?SK_RARITY.find(x=>x.name===owned.rarity):rollSkillRarity(boss);
+  if(!owned&&boss&&rarity.name==="ノーマル")rarity=SK_RARITY[1];
+  if(!owned&&rarity.name==="レジェンド"&&hasLegend)rarity=SK_RARITY[2];
+  used.add(base.key);options.push({key:base.key,name:base.name,rarity:rarity.name,className:rarity.className,power:rarity.power,apply:base.apply});
+ }
+ return options;
+}
+function levelUp(n,boss=false){
+ G.xp+=n;
+ while(G.xp>=G.need){
+  G.xp-=G.need;G.lv++;G.need=Math.floor(G.need*1.35);G.paused=true;
+  let a=makeSkillChoices(boss);G.pick=a;
+  $("overlayContent").innerHTML="<h2>"+(boss?"ボス撃破報酬！":"レベルアップ！")+"</h2><p class='small'>スキルを1つ選択</p><div class='choices'>"+a.map((sk,i)=>"<button class='choice rarity-"+sk.className+"' data-skill='"+i+"'><strong>"+sk.rarity+"</strong><span>"+sk.name+"</span><p class='small'>"+(sk.power*100).toFixed(0)+"%強化 / Lv."+( (G.skills.find(x=>x.key===sk.key)?.level||0)+1 )+"</p></button>").join("")+"</div>";
+  $("battleOverlay").classList.remove("hidden");
+ }
+}
+$("overlayContent").addEventListener("click",e=>{
+ let b=e.target.closest("[data-skill]");if(!b||!G.pick)return;
+ let sk=G.pick[+b.dataset.skill];if(!sk)return;
+ sk.apply(G.p,sk.power);
+ let owned=G.skills.find(x=>x.key===sk.key);
+ if(owned){owned.level++;}else{G.skills.push({key:sk.key,name:sk.name,rarity:sk.rarity,level:1})}
+ G.pick=null;G.paused=false;$("battleOverlay").classList.add("hidden");G.last=performance.now();runLoop();
+});
+function spawn(){let t=["beast","goblin","skeleton","hover"][Math.floor(Math.random()*4)],right=Math.random()<.5,k=(1+(state.stage-1)*.15)*(G.mode==="hard"?1.65:1);G.enemies.push({t,x:right?W+20:-20,y:t==="hover"?240:F,hp:40*k,max:40*k,spd:1.1*(G.mode==="hard"?1.15:1),atk:6*k,cd:1+Math.random(),flash:0,knockX:0,wind:0,face:right?-1:1,diveState:"idle",diveTimer:0,diveCooldown:2.5+Math.random()*3,contactCd:0})}
 function damageText(x,y,value,color){G.damageTexts.push({x,y,text:String(typeof value==="number"?Math.round(value):value),life:.8,color:color||"#fff4c7"})}
 function knockback(target,dir,power){target.knockX=Math.max(-13,Math.min(13,(target.knockX||0)+dir*power))}
 function hit(n,fromX){let p=G.p;if(!G.active||G.ended||p.hp<=0||p.inv>0)return;p.hp=Math.max(0,p.hp-n);p.inv=.35;p.hitFlash=.3;knockback(p,p.x<(fromX??p.x)?-1:1,3);damageText(p.x,p.y-55,n,"#e34e4e");if(p.hp<=0){p.hp=0;end(false)}}
 function kill(e){e.dead=true;G.kills++;G.reward+=4;state.totalKills++;damageText(e.x,e.y-35,"魔晶 +4","#e2bd52");levelUp(2)}
-function bossDown(){let b=G.boss;G.boss=null;G.reward+=[100,180,300][b.i];levelUp(35);G.chest={x:b.x};damageText(b.x,b.y-30,"BOSS DOWN！","#f2bd4d")}
+function bossDown(){let b=G.boss;G.boss=null;G.reward+=[100,180,300][b.i];levelUp(35,true);G.chest={x:b.x};damageText(b.x,b.y-30,"BOSS DOWN！","#f2bd4d")}
 function attack(){
  const p=G.p;if(!G.active||G.paused||p.attackCooldown>0||p.attackTimer>0)return;
  const motions=["slash","rising","falling"];p.attackMotion=motions[p.attackCombo%3];p.attackCombo++;
@@ -140,7 +178,7 @@ function attack(){
  for(const q of G.shots){if(q.life>0&&(q.x-p.x)*p.attackDir>-18&&(q.x-p.x)*p.attackDir<112&&Math.abs(q.y-(p.y+25))<82){q.life=0;damageText(q.x,q.y,"撃ち落とし！","#9fe8ff");G.hitStop=.025}}
  // 2段目の斬り上げに、前方へ伸びる魔法斬撃を追加
  if(p.attackMotion==="rising"){G.swordWaves.push({x:p.x+p.attackDir*25,y:p.y+24,dir:p.attackDir,life:.75,damage:Math.round(damage*.8),hit:[]})}
- for(const e of G.enemies){if(e.dead||Math.abs(e.x-p.x)>p.range||Math.abs(e.y-(p.y+p.h/2))>115||(e.x-p.x)*p.attackDir< -12)continue;
+ for(const e of G.enemies){if(e.dead||Math.abs(e.x-p.x)>p.range||(e.x-p.x)*p.attackDir< -12)continue;const enemyTop=e.y-(e.t==="hover"?60:60),enemyBottom=e.y;const verticalReach=24+Math.max(0,p.range-85)*.8;const attackTop=p.y+p.h-80-verticalReach,attackBottom=p.y+p.h-5+verticalReach;if(enemyBottom<attackTop||enemyTop>attackBottom)continue;
  e.hp-=damage;e.flash=.12;knockback(e,e.x>=p.x?1:-1,Math.min(10,2+damage*.16));damageText(e.x,e.y-35,damage,"#fff4c7");hits++;if(e.hp<=0)kill(e)}
  if(G.boss&&Math.abs(G.boss.x-p.x)<p.range+35&&(G.boss.x-p.x)*p.attackDir>=-18){G.boss.hp-=damage;G.boss.flash=.12;knockback(G.boss,G.boss.x>=p.x?1:-1,Math.min(3,damage*.025));damageText(G.boss.x,G.boss.y-65,damage,"#fff4c7");hits++;if(G.boss.hp<=0)bossDown()}
  if(hits)G.hitStop=.035;
@@ -152,15 +190,21 @@ function update(dt){
  if(!p.ground){p.vy+=.55;p.y+=p.vy+(p.knockY||0);if(p.y>=F-p.h){p.y=F-p.h;p.vy=0;p.ground=true;p.jumps=0}}else p.y=F-p.h;
  p.mp=Math.min(50,p.mp+2*dt);p.st=Math.min(100,p.st+5*dt);
  G.spawn-=dt;if(G.spawn<=0&&G.t<360){spawn();G.spawn=1.5}
- for(const e of G.enemies){if(e.dead)continue;e.flash=Math.max(0,e.flash-dt);e.cd-=dt;e.wind=Math.max(0,e.wind-dt);e.knockX=(e.knockX||0)*Math.pow(.08,dt);e.x+=e.knockX;let d=p.x-e.x,dir=Math.sign(d)||-1;
+ for(const e of G.enemies){if(e.dead)continue;e.flash=Math.max(0,e.flash-dt);e.cd-=dt;e.contactCd=Math.max(0,(e.contactCd||0)-dt);e.wind=Math.max(0,e.wind-dt);e.knockX=(e.knockX||0)*Math.pow(.08,dt);e.x+=e.knockX;let d=p.x-e.x,dir=Math.sign(d)||-1;
  if(e.t==="skeleton"){if(Math.abs(d)>220)e.x+=dir*e.spd*.3;else if(e.cd<=0){G.shots.push({x:e.x,y:e.y-24,vx:dir*180,vy:-235,life:2.8,damage:e.atk});e.cd=2}}
- else if(e.t==="goblin"||e.t==="hover"){if(e.wind<=0&&Math.abs(d)<150){e.wind=.55;e.face=dir}else if(e.wind>0){e.x+=e.face*e.spd*2.8}else e.x+=dir*e.spd}
+ else if(e.t==="hover"){
+  e.diveCooldown-=dt;
+  if(e.diveState==="idle"){e.x+=dir*e.spd*.55;if(e.diveCooldown<=0){e.diveState="windup";e.diveTimer=.55;e.diveTargetX=p.x;e.face=dir}}
+  else if(e.diveState==="windup"){e.diveTimer-=dt;if(e.diveTimer<=0){e.diveState="dive";e.diveTimer=1.1;e.diveTargetX=p.x}}
+  else if(e.diveState==="dive"){let dx=e.diveTargetX-e.x,dy=(p.y+p.h-18)-e.y,len=Math.hypot(dx,dy)||1;e.x+=dx/len*e.spd*5.5*60*dt;e.y+=dy/len*e.spd*5.5*60*dt;e.diveTimer-=dt;if(e.diveTimer<=0||e.y>=F-12){e.diveState="recover";e.diveTimer=.7}}
+  else if(e.diveState==="recover"){e.y+=(240-e.y)*Math.min(1,dt*4);e.diveTimer-=dt;if(e.diveTimer<=0){e.diveState="idle";e.diveCooldown=3+Math.random()*3}}
+ }else if(e.t==="goblin"){if(e.wind<=0&&Math.abs(d)<150){e.wind=.55;e.face=dir}else if(e.wind>0){e.x+=e.face*e.spd*2.8}else e.x+=dir*e.spd}
  else e.x+=dir*e.spd;
- const horizontalTouch=Math.abs(d)<(e.t==="hover"?25:30);const playerTop=p.y,playerBottom=p.y+p.h,enemyTop=e.y-(e.t==="hover"?48:58),enemyBottom=e.y;const verticalTouch=playerBottom>enemyTop+3&&playerTop<enemyBottom-3;if(horizontalTouch&&verticalTouch&&e.cd<=0){hit(e.atk,e.x);e.cd=1.4}}
+ const horizontalTouch=Math.abs(p.x-e.x)<(e.t==="hover"?25:30);const playerTop=p.y,playerBottom=p.y+p.h,enemyTop=e.y-60,enemyBottom=e.y;const verticalTouch=playerBottom>enemyTop+3&&playerTop<enemyBottom-3;if(horizontalTouch&&verticalTouch&&e.contactCd<=0){hit(e.atk,e.x);e.contactCd=1.4}}
  G.enemies=G.enemies.filter(e=>!e.dead);
  for(const q of G.shots){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=520*dt;q.life-=dt;if(Math.abs(q.x-p.x)<20&&Math.abs(q.y-(p.y+25))<24&&q.life>0){hit(q.damage,q.x);q.life=0}}
  G.shots=G.shots.filter(q=>q.life>0);
- for(const w of G.swordWaves){w.x+=w.dir*330*dt;w.life-=dt;for(const e of G.enemies){if(e.dead||w.hit.includes(e))continue;if(Math.abs(e.x-w.x)<28&&Math.abs(e.y-w.y)<90){e.hp-=w.damage;e.flash=.12;knockback(e,e.x>=w.x?1:-1,4);damageText(e.x,e.y-38,w.damage,"#a9eaff");w.hit.push(e);if(e.hp<=0)kill(e)}}if(G.boss&&!w.hit.includes(G.boss)&&Math.abs(G.boss.x-w.x)<55&&Math.abs(G.boss.y-w.y)<125){G.boss.hp-=w.damage;G.boss.flash=.12;damageText(G.boss.x,G.boss.y-65,w.damage,"#a9eaff");w.hit.push(G.boss);if(G.boss.hp<=0)bossDown()}}
+ for(const w of G.swordWaves){w.x+=w.dir*330*dt;w.life-=dt;for(const e of G.enemies){if(e.dead||w.hit.includes(e))continue;if(Math.abs(e.x-w.x)<28&&Math.abs(e.y-w.y)<58){e.hp-=w.damage;e.flash=.12;knockback(e,e.x>=w.x?1:-1,4);damageText(e.x,e.y-38,w.damage,"#a9eaff");w.hit.push(e);if(e.hp<=0)kill(e)}}if(G.boss&&!w.hit.includes(G.boss)&&Math.abs(G.boss.x-w.x)<55&&Math.abs(G.boss.y-w.y)<125){G.boss.hp-=w.damage;G.boss.flash=.12;damageText(G.boss.x,G.boss.y-65,w.damage,"#a9eaff");w.hit.push(G.boss);if(G.boss.hp<=0)bossDown()}}
  G.swordWaves=G.swordWaves.filter(w=>w.life>0);
  if(G.boss){let b=G.boss;b.flash=Math.max(0,(b.flash||0)-dt);b.knockX=(b.knockX||0)*Math.pow(.08,dt);b.x+=b.knockX;b.cd-=dt;let d=p.x-b.x;if(Math.abs(d)>100)b.x+=Math.sign(d)*.7;if(b.cd<=0){hit(14*(G.mode==="hard"?1.5:1),b.x);b.cd=1.8}b.limit-=dt;if(b.limit<=0){end(false);return}}
  if(G.chest&&Math.abs(G.chest.x-p.x)<38){G.chest=null;let r=Math.random();if(r<.5)p.hp=Math.min(p.max,p.hp+p.max*.3);else if(r<.8)state.gems++;else state.tickets++;save()}
