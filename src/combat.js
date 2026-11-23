@@ -137,8 +137,11 @@ export function setCombatInput(run, input) {
       if (!enemy.isAlive) continue;
       const dx = enemy.x - p.x;
       const dy = Math.abs((enemy.y - 20) - (p.y - 20));
+      const verticalReach = enemy.isBoss ? 90 : enemy.id === "hover"
+        ? (p.onGround ? 90 : 155)
+        : 65;
       if (Math.abs(dx) < reach + (enemy.radius || 15) &&
-          Math.sign(dx || p.facing) === p.facing && dy < (enemy.isBoss ? 90 : 65)) {
+          Math.sign(dx || p.facing) === p.facing && dy < verticalReach) {
         damageEnemy(run, enemy, p.attack);
       }
     }
