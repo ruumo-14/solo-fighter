@@ -275,7 +275,7 @@ export function tickCombat(run, dt) {
     }
   }
   run.projectiles = run.projectiles.filter(projectile => projectile.life > 0 && projectile.x > -40 && projectile.x < 940);
-  run.enemies = run.enemies.filter(enemy => enemy.isAlive || enemy.isBoss);
+  run.enemies = run.enemies.filter(enemy => enemy.isAlive);
   run.particles = run.particles.filter(particle => {
     particle.x += particle.vx * dt;
     particle.y += particle.vy * dt;
