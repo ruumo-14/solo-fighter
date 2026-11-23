@@ -21,12 +21,19 @@ This work is being developed on the `rebuild-v1` branch. The existing `main` bra
 
 ## Implementation order
 
-1. Core state, configuration, and save schema.
-2. Combat engine and stage/boss progression.
-3. Character, pet, equipment, skill, and gacha systems.
-4. Modes, missions, achievements, titles, events, and rankings.
-5. Server-backed accounts, persistence, chat, trading, and cooperative events.
-6. Testing, balancing, and deployment.
+1. [x] Core state, configuration, and local save schema.
+2. [x] First playable combat prototype, enemy behaviors, level-up choices, and stage/boss progression.
+3. [ ] Character, pet, equipment, skill, and gacha systems.
+4. [ ] Modes, missions, achievements, titles, events, and rankings.
+5. [ ] Server-backed accounts, persistence, chat, trading, and cooperative events.
+6. [ ] Testing, balancing, and deployment.
+
+## Current prototype notes
+
+- Only Normal mode is exposed until other modes are implemented.
+- The new local save key is `solo-fighter-rebuild`; the old save key is not imported.
+- Stage rewards update permanent player experience, unlocked stages, and 魔晶.
+- A GitHub Actions workflow checks JavaScript module syntax on pushes to this branch.
 
 ## Important
 
