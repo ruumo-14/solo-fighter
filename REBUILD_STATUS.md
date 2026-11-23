@@ -1,43 +1,39 @@
-# SOLO FIGHTER — Clean Rebuild
+# SOLO FIGHTER — 実装状況
 
-This work is being developed on the `rebuild-v1` branch. The existing `main` branch is left untouched as the rollback point.
+開発ブランチ：`rebuild-v1`（`main`は未変更）
 
-## Confirmed core rules
+## 現在の実装
+- [x] 横視点アクションの試作
+- [x] 左右移動・ジャンプ・近接攻撃
+- [x] 獣/ゴブリン/スケルトン/ホバリンの基本AI
+- [x] ホバリンは突進中に攻撃を受けると元位置へ退避
+- [x] 2/4/6分のボス出現、7分制限、3体撃破でクリア
+- [x] ステージ解放・再挑戦のローカル保存
+- [x] 魔晶・経験値のローカル報酬
+- [x] ガチャ確率設定の定義
+- [x] キャラ/ペット/装備/スキル/ミッション/実績/称号/ランキング/取引/チャット/イベントのローカルデータ操作基盤（`src/systems.js`）
+- [x] Supabase用の初期DBスキーマ（`supabase/schema.sql`）
+- [x] JavaScript構文・コアテストのGitHub Actions
 
-- Side-view action combat.
-- Stage-based progression; cleared stages can be replayed.
-- Stage timer: maximum 7 minutes (420 seconds).
-- Bosses appear at 2:00, 4:00, and 6:00. The stage clears after the final boss is defeated.
-- Initial stage progression is prepared for 20 stages and can expand through updates.
-- Primary currency: 魔晶.
-- Rarities: ノーマル / レア / エピック / レジェンド / S1.
-- Equipment slots: 頭 / 胴 / 脚 / 足 / 手 / 武器.
-- Equipment upgrade cap: Lv.10.
-- Pet level cap: Lv.20.
-- Character level cap: Lv.100 for the current design.
-- Normal gacha: items 50%, Normal 10%, Rare 35%, Epic 4%, Legendary 1%.
-- S1 gacha: items 50%, Normal 10%, Rare 33%, Epic 4%, Legendary 2%, S1 1%.
-- Separate 100-pull pity counters for each banner.
+## 仕様として確定、ゲーム内の完成実装は未完了
+- [ ] キャラクターの実データ・専用攻撃演出・育成画面・ガチャ画面
+- [ ] ペットの実データ・育成画面・装備/連携
+- [ ] 6部位装備インベントリ・セット効果・素材を使ったLv.10強化UI
+- [ ] スキル実データ・スキル装備画面・自由な組み合わせ
+- [ ] ガチャ演出・通貨消費・アイテム排出・100連天井の保証内容確定
+- [ ] 各ステージの背景・敵編成・ボス個別データ
+- [ ] ハード/エンドレス/ボスラッシュ/サバイバル等の実際のルール
+- [ ] ログインボーナス・デイリー/週間ミッションUI
+- [ ] 実績・称号の条件とプロフィール画面
+- [ ] 総合/週間ランキングのオンライン集計
+- [ ] 定期イベント・限定報酬・大会・協力イベント
+- [ ] 認証・クロスデバイスセーブ・チャット・取引のサーバー処理と画面
+- [ ] BGM・サウンド・全体UI・チュートリアル
+- [ ] ブラウザ実機テスト・バランス調整
 
-## Implementation order
-
-1. [x] Core state, configuration, and local save schema.
-2. [x] First playable combat prototype, enemy behaviors, level-up choices, and stage/boss progression.
-3. [ ] Character, pet, equipment, skill, and gacha systems.
-4. [ ] Modes, missions, achievements, titles, events, and rankings.
-5. [ ] Server-backed accounts, persistence, chat, trading, and cooperative events.
-6. [ ] Testing, balancing, and deployment.
-
-## Current prototype notes
-
-- Only Normal mode is exposed until other modes are implemented.
-- The new local save key is `solo-fighter-rebuild`; the old save key is not imported.
-- Stage rewards update permanent player experience, unlocked stages, and 魔晶.
-- A GitHub Actions workflow checks JavaScript module syntax on pushes to this branch.
-
-## Important
-
-- Do not overwrite `main` during development.
-- Do not expose server secrets in browser code.
-- Online rewards and gacha results must be validated server-side.
-- Existing browser saves are not automatically migrated into the new save schema.
+## 安全上の実装ルール
+- ガチャ結果、魔晶、アイテム移動、ランキング、取引、アカウント権限はサーバー側で検証する。
+- Supabaseのservice_roleキーをブラウザやGitHubに置かない。
+- オンライン機能は接続設定・Edge Functions・RLSの確認後に有効化する。
+- ローカル試作のチャット/取引/ランキングはオンライン同期ではない。
+- 未確認の動作を「完成」「動作確認済み」と表現しない。
