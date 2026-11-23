@@ -20,16 +20,15 @@ export function createStageRun(stageNumber, mode = "normal") {
     elapsedSeconds: 0,
     status: STAGE_RUN_STATUS.RUNNING,
     nextBossIndex: 0,
-    activeBossIndex: null,
+    activeBossIndices: [],
     defeatedBosses: [],
     emittedEvents: []
   };
 }
 
 /**
- * Advances the stage clock and returns events that the presentation layer
- * should display. The clock is capped at seven minutes. A stage only clears
- * after the third boss has been defeated.
+ * Emits every boss spawn crossed by this frame. Bosses remain independently
+ * trackable, so a late player can still fight more than one spawned boss.
  */
 export function advanceStage(run, deltaSeconds) {
   if (!run || run.status === STAGE_RUN_STATUS.CLEARED ||
@@ -54,42 +53,43 @@ export function advanceStage(run, deltaSeconds) {
     previous < bossTimes[run.nextBossIndex] &&
     run.elapsedSeconds >= bossTimes[run.nextBossIndex]
   ) {
-    const bossIndex = run.nextBossIndex;
-    run.nextBossIndex += 1;
-    run.activeBossIndex = bossIndex;
+    const bossIndex = run.nextBossIndex++;
+    run.activeBossIndices.push(bossIndex);
     run.status = STAGE_RUN_STATUS.BOSS_ACTIVE;
-    const event = {
+    events.push({
       type: "boss-spawn",
       bossIndex,
       stageNumber: run.stageNumber,
       atSeconds: bossTimes[bossIndex]
-    };
-    events.push(event);
-    run.emittedEvents.push(event);
+    });
   }
 
   if (run.elapsedSeconds >= GAME_CONFIG.stage.maxDurationSeconds &&
       run.defeatedBosses.length < bossTimes.length) {
     run.status = STAGE_RUN_STATUS.DEFEATED;
-    const event = { type: "stage-defeated", reason: "time-limit" };
-    events.push(event);
-    run.emittedEvents.push(event);
+    events.push({ type: "stage-defeated", reason: "time-limit" });
   }
 
+  run.emittedEvents.push(...events);
   return { run, events };
 }
 
-export function defeatActiveBoss(run) {
-  if (!run || run.status !== STAGE_RUN_STATUS.BOSS_ACTIVE ||
-      run.activeBossIndex === null) {
+export function defeatActiveBoss(run, requestedBossIndex = null) {
+  if (!run || run.status === STAGE_RUN_STATUS.CLEARED ||
+      run.status === STAGE_RUN_STATUS.DEFEATED ||
+      run.activeBossIndices.length === 0) {
     return { run, events: [] };
   }
 
-  const bossIndex = run.activeBossIndex;
+  const bossIndex = requestedBossIndex ?? run.activeBossIndices[0];
+  if (!run.activeBossIndices.includes(bossIndex)) {
+    return { run, events: [] };
+  }
+
+  run.activeBossIndices = run.activeBossIndices.filter(index => index !== bossIndex);
   if (!run.defeatedBosses.includes(bossIndex)) {
     run.defeatedBosses.push(bossIndex);
   }
-  run.activeBossIndex = null;
 
   const events = [{
     type: "boss-defeated",
@@ -105,7 +105,9 @@ export function defeatActiveBoss(run) {
       elapsedSeconds: run.elapsedSeconds
     });
   } else {
-    run.status = STAGE_RUN_STATUS.RUNNING;
+    run.status = run.activeBossIndices.length
+      ? STAGE_RUN_STATUS.BOSS_ACTIVE
+      : STAGE_RUN_STATUS.RUNNING;
   }
 
   run.emittedEvents.push(...events);
