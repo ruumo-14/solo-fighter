@@ -14,12 +14,13 @@ The clean rebuild is in `rebuild-v1`. The existing `main` branch remains unchang
 - Enemy warning and charge behavior
 - Aerial charger retreats when interrupted by an attack
 - Experience, level-ups, and three-choice upgrades
+- Permanent player experience, stage unlocks, and 魔晶 rewards saved in this browser
 - Bosses scheduled at 2:00, 4:00, and 6:00
 - Seven-minute stage limit
 - Stage clear after all three bosses are defeated
 - Mobile touch controls
 
-The current browser prototype exposes only Normal mode while the additional modes are being implemented. This branch is a combat prototype, not yet the complete game.
+The current browser prototype exposes only Normal mode while the additional modes are being implemented. Permanent progression and rewards are saved locally in the browser. This branch is a combat prototype, not yet the complete game.
 
 ## Core design settings
 
@@ -44,7 +45,7 @@ The current browser prototype exposes only Normal mode while the additional mode
 - `src/stage.js`: stage clock and boss progression
 - `src/enemies.js`: enemy definitions and shared behavior rules
 - `src/config.js`: game-wide configuration
-- `src/state.js`: new save-data schema (not yet connected to the prototype UI)
+- `src/state.js`: new save-data schema and local progression persistence
 
 ## Deployment
 
