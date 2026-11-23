@@ -204,4 +204,6 @@ overlayContent.addEventListener("click", event => {
   hideOverlay();
   if (run.pendingLevelUps > 0) showLevelUp();
 });
+refreshProfileHud();
+refreshStageOptions();
 drawTitleScreen();
