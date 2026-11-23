@@ -1,4 +1,5 @@
 import { createCombatRun, setCombatInput, tickCombat, drawCombat, chooseLevelUp, getCombatStatus } from "./combat.js";
+import { loadLocalGameState, saveLocalGameState, applyStageResults } from "./state.js";
 
 const canvas = document.querySelector("#arena");
 const ctx = canvas.getContext("2d");
@@ -16,6 +17,7 @@ const timeText = document.querySelector("#time");
 const bossText = document.querySelector("#bosses");
 
 let run = null;
+let gameState = loadLocalGameState();
 let lastFrame = 0;
 let animationId = 0;
 const keys = { left: false, right: false, jump: false, attack: false };
@@ -45,12 +47,27 @@ function showResult() {
   if (!run) return;
   const status = getCombatStatus(run);
   const cleared = run.result === "cleared";
+  if (!run.rewardGranted) {
+    const applied = applyStageResults(gameState, {
+      outcome: run.result,
+      stageNumber: run.stage.stageNumber,
+      kills: run.kills
+    });
+    gameState = applied.state;
+    run.rewardGranted = true;
+    saveLocalGameState(gameState);
+    refreshProfileHud();
+    refreshStageOptions();
+    run.rewards = applied.rewards;
+  }
   statusText.textContent = cleared ? "ステージクリア！" : "ステージ失敗";
   showOverlay(`
     <h2>${cleared ? "ステージクリア！" : "ステージ失敗"}</h2>
     <p>ステージ ${run.stage.stageNumber}</p>
     <p>生存時間：${formatTime(status.elapsedSeconds)} / 討伐数：${status.kills}</p>
     <p>撃破ボス：${status.bossesDefeated}/3　到達Lv：${status.level}</p>
+    <p>獲得経験値：${run.rewards.experience}　獲得魔晶：${run.rewards.magicCrystals}</p>
+    <p>プレイヤーLv. ${gameState.profile.playerLevel}　所持魔晶 ${gameState.resources.magicCrystals}</p>
     <button class="primary" id="retry">もう一度挑戦</button>
     <button id="back">ステージ選択へ</button>
   `);
@@ -60,7 +77,9 @@ function showResult() {
     run = null;
     hideOverlay();
     statusText.textContent = "ステージを選択して開始してください。";
-    drawTitleScreen();
+    refreshProfileHud();
+refreshStageOptions();
+drawTitleScreen();
   });
 }
 function formatTime(seconds) {
@@ -104,9 +123,25 @@ function frame(now) {
   }
   animationId = requestAnimationFrame(frame);
 }
+function refreshProfileHud() {
+  const level = document.querySelector("#profile-level");
+  const crystals = document.querySelector("#profile-crystals");
+  if (level) level.textContent = gameState.profile.playerLevel;
+  if (crystals) crystals.textContent = gameState.resources.magicCrystals;
+}
+function refreshStageOptions() {
+  const unlocked = Math.max(1, gameState.progression.unlockedStage);
+  for (const option of stageSelect.options) {
+    const stageNumber = Number(option.value);
+    option.disabled = stageNumber > unlocked;
+    option.textContent = "STAGE " + stageNumber + (stageNumber > unlocked ? "（未解放）" : "");
+  }
+  if (Number(stageSelect.value) > unlocked) stageSelect.value = String(unlocked);
+}
 function startRun() {
   cancelAnimationFrame(animationId);
-  const stage = Math.max(1, Math.min(20, Number(stageSelect.value) || 1));
+  refreshStageOptions();
+  const stage = Math.max(1, Math.min(gameState.progression.unlockedStage, Number(stageSelect.value) || 1));
   const mode = modeSelect.value;
   run = createCombatRun(stage, mode);
   lastFrame = 0;
