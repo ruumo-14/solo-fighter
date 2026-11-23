@@ -69,8 +69,10 @@ export function createEnemy(enemyId, overrides = {}) {
  * Goblins and Hoverins only deal contact damage during their charge.
  */
 export function canDealContactDamage(enemy) {
-  const definition = ENEMY_DEFINITIONS[enemy?.id];
-  if (!definition || !enemy.isAlive) return false;
+  if (!enemy || !enemy.isAlive) return false;
+  if (enemy.isBoss) return enemy.state === ENEMY_STATE.CHARGE || enemy.isCharging === true;
+  const definition = ENEMY_DEFINITIONS[enemy.id];
+  if (!definition) return false;
   if (!definition.contactDamageOnlyWhileCharging) return true;
   return enemy.state === ENEMY_STATE.CHARGE || enemy.isCharging === true;
 }
