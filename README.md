@@ -1,64 +1,57 @@
 # SOLO FIGHTER
 
-ブラウザで遊ぶ2D横視点アクションサバイバルゲームです。現在は新しいゲーム本体を1ファイル構成で再構築しています。
+SOLO FIGHTER is being rebuilt as an original browser-based side-view action game.
 
-## 公開方法
+## Development branch
 
-このリポジトリは静的HTMLです。Vercelでは次の設定で公開できます。
+The clean rebuild is in `rebuild-v1`. The existing `main` branch remains unchanged as the rollback version.
 
-- Framework Preset: Other
-- Build Command: 空欄
-- Output Directory: `. ` ではなく `.`
-- Install Command: 空欄
+## Current prototype
 
-GitHubのmainブランチを更新すると、Vercel側の自動デプロイが有効な場合は再デプロイされます。
+- Canvas-based side-view action battle
+- Left/right movement, jump, and melee attack
+- Four basic enemy behavior types
+- Enemy warning and charge behavior
+- Aerial charger retreats when interrupted by an attack
+- Experience, level-ups, and three-choice upgrades
+- Bosses scheduled at 2:00, 4:00, and 6:00
+- Seven-minute stage limit
+- Stage clear after all three bosses are defeated
+- Mobile touch controls
 
-## 現在のゲーム内容
+The current browser prototype exposes only Normal mode while the additional modes are being implemented. This branch is a combat prototype, not yet the complete game.
 
-- 横視点のキャンバスバトル
-- 左右移動、ジャンプ、2段ジャンプ、通常攻撃
-- 6分間のステージと、2分・4分・6分のボス出現
-- ボス撃破後の宝箱。プレイヤーが触れると開く
-- 経験値によるレベルアップと3択スキル
-- ノーマル、ハード、エンドレスの開始モード
-- ハードモードはプレイヤーLv.50で解放
-- 最初の20ステージの進行枠
-- キャラクター、装備6部位、ペット、ガチャ、ショップ、ミッション、記録画面
-- 通常ガチャ、S1ガチャ、独立した100回天井
-- ガチャチケットによるガチャ
-- キャラクターのレアリティ合成と最大Lv上限解放
-- ペットの最大Lv上限解放
-- 装備ロック・廃棄・強化
-- ブラウザ内への自動保存
+## Core design settings
 
-## ガチャ確率
+- Stage duration: maximum 7 minutes (420 seconds)
+- Boss appearance: 2, 4, and 6 minutes
+- Initial stage progression: 20 stages, expandable later
+- Primary currency: 魔晶
+- Rarities: ノーマル / レア / エピック / レジェンド / S1
+- Equipment slots: 頭 / 胴 / 脚 / 足 / 手 / 武器
+- Equipment upgrade cap: Lv.10
+- Pet level cap: Lv.20
+- Character level cap: Lv.100
+- Normal gacha: items 50%, Normal 10%, Rare 35%, Epic 4%, Legendary 1%
+- S1 gacha: items 50%, Normal 10%, Rare 33%, Epic 4%, Legendary 2%, S1 1%
+- Independent 100-pull pity counters
 
-通常ガチャ（キャラクター・ペット）:
-- アイテム等 50%
-- ノーマル 10%
-- レア 35%
-- エピック 4%
-- レジェンド 1%
+## Project structure
 
-S1ガチャ:
-- アイテム等 50%
-- ノーマル 10%
-- レア 33%
-- エピック 4%
-- レジェンド 2%
-- S1 1%
+- `index.html`: prototype screen
+- `src/main.js`: browser input, rendering loop, and UI
+- `src/combat.js`: combat simulation and canvas renderer
+- `src/stage.js`: stage clock and boss progression
+- `src/enemies.js`: enemy definitions and shared behavior rules
+- `src/config.js`: game-wide configuration
+- `src/state.js`: new save-data schema (not yet connected to the prototype UI)
 
-各バナーの天井は別々に管理します。100回目はエピック以上の対象を均等確率で抽選します。S1ガチャではエピック・レジェンド・S1が対象です。
+## Deployment
 
-## セーブ・アカウントについて
+The rebuild uses native browser ES modules and does not require a build step. Vercel should use the Other framework preset with the repository root as the output directory. Do not merge `rebuild-v1` into `main` until the prototype has been tested.
 
-現行の再構築版は `localStorage` に保存するローカル版です。ブラウザ内のデータは自動保存されますが、別端末との同期、ユーザー名・パスワード認証、オンラインランキング、リアルタイムのプレイヤー間取引はまだ接続していません。
+## Not yet implemented
 
-リポジトリ内のSupabaseスキーマは残していますが、ゲーム画面からSupabaseへ接続している状態ではありません。オンライン機能を有効にするには、認証・保存・ガチャ抽選・報酬付与を安全なサーバー側処理に接続し、RLSとサーバー側検証を確認する必要があります。service_role keyをブラウザやGitHubへ置かないでください。
+Permanent account progression, save integration, character and pet collection, equipment inventory, gacha UI, online accounts, cross-device saves, rankings, chat, trading, and cooperative events are still pending.
 
-## 開発メモ
-
-- ゲーム本体: `index.html`
-- Supabase用の既存テーブル定義: `supabase/schema.sql`
-- セーブキー: `solo-fighter-v2`（旧プロトタイプのlocalStorageキーとは別）
-- 既存セーブデータの移行は行いません。
+Never place private server keys in browser code or in the repository.
